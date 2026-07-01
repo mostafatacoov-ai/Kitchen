@@ -1,0 +1,138 @@
+.contactSection {
+  padding: 8rem 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  min-height: calc(100vh - 80px);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.title {
+  font-size: 2.75rem;
+  color: var(--foreground);
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.subtitle {
+  font-size: 1.15rem;
+  color: var(--text-secondary);
+}
+
+.divider {
+  width: 50px;
+  height: 3px;
+  background-color: var(--orange);
+  margin: 1.25rem auto 0;
+  border-radius: 2px;
+  box-shadow: 0 0 10px rgba(224, 90, 22, 0.5);
+}
+
+.formCard {
+  background-color: var(--surface);
+  padding: 3.5rem 3rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-elite);
+}
+
+.formGroup {
+  margin-bottom: 2rem;
+}
+
+.label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.75rem;
+  color: var(--foreground);
+  text-align: right;
+}
+
+.input, .select, .textarea {
+  width: 100%;
+  padding: 0.9rem 1.25rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 1rem;
+  transition: var(--transition-smooth);
+  background-color: #05070B;
+  color: var(--foreground);
+  text-align: right;
+}
+
+.input:focus, .select:focus, .textarea:focus {
+  outline: none;
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(224, 90, 22, 0.1);
+}
+
+.fileInputContainer {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+.fileInput {
+  position: absolute;
+  font-size: 100px;
+  opacity: 0;
+  right: 0;
+  top: 0;
+  cursor: pointer;
+}
+
+.fileBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 1.25rem;
+  border: 1px dashed var(--border-color);
+  border-radius: 6px;
+  background-color: #05070B;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.fileBtn:hover {
+  border-color: var(--orange);
+  color: var(--orange);
+  background-color: rgba(224, 90, 22, 0.02);
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, var(--orange) 0%, #B8430B 100%);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--glow-orange);
+  transition: var(--transition-smooth);
+  margin-top: 1.5rem;
+}
+
+.submitBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(224, 90, 22, 0.4);
+}
+
+@media (max-width: 768px) {
+  .contactSection {
+    padding: 5rem 1.5rem;
+  }
+  .formCard {
+    padding: 2.5rem 1.5rem;
+  }
+}
+

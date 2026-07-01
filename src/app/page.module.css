@@ -1,142 +1,284 @@
-.page {
-  --background: #fafafa;
-  --foreground: #fff;
+.valuesSection {
+  padding: 8rem 2rem;
+  background-color: #090E17;
+  position: relative;
+  border-top: 1px solid var(--border-color);
+}
 
-  --text-primary: #000;
-  --text-secondary: #666;
+.container {
+  max-width: 1300px;
+  margin: 0 auto;
+}
 
-  --button-primary-hover: #383838;
-  --button-secondary-hover: #f2f2f2;
-  --button-secondary-border: #ebebeb;
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 5rem;
+}
 
+.tagline {
+  color: var(--orange);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.sectionTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.divider {
+  width: 50px;
+  height: 3px;
+  background-color: var(--orange);
+  margin: 1.25rem auto 0;
+  border-radius: 2px;
+  box-shadow: 0 0 10px rgba(224, 90, 22, 0.5);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2.5rem;
+}
+
+.valueCard {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  padding: 3.5rem 2.5rem;
+  border-radius: 8px;
+  transition: var(--transition-smooth);
+}
+
+.valueCard:hover {
+  transform: translateY(-5px);
+  border-color: rgba(224, 90, 22, 0.25);
+  box-shadow: var(--shadow-elite);
+}
+
+.iconWrapper {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(224, 90, 22, 0.06);
+  border: 1px solid rgba(224, 90, 22, 0.15);
   display: flex;
-  flex: 1;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-geist-sans);
-  background-color: var(--background);
+  margin-bottom: 2rem;
+  color: var(--orange);
+  transition: var(--transition-smooth);
 }
 
-.main {
-  display: flex;
-  flex: 1;
-  width: 100%;
-  max-width: 800px;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  background-color: var(--foreground);
-  padding: 120px 60px;
+.valueCard:hover .iconWrapper {
+  background: var(--orange);
+  color: #fff;
+  box-shadow: var(--glow-orange);
+  transform: scale(1.05);
 }
 
-.intro {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  gap: 24px;
-}
-
-.intro h1 {
-  max-width: 320px;
-  font-size: 40px;
+.valueCard h3 {
+  font-size: 1.35rem;
   font-weight: 600;
-  line-height: 48px;
-  letter-spacing: -2.4px;
-  text-wrap: balance;
-  color: var(--text-primary);
+  margin-bottom: 1rem;
+  color: var(--foreground);
 }
 
-.intro p {
-  max-width: 440px;
-  font-size: 18px;
-  line-height: 32px;
-  text-wrap: balance;
+.valueCard p {
+  font-size: 1rem;
+  line-height: 1.8;
   color: var(--text-secondary);
 }
 
-.intro a {
-  font-weight: 500;
-  color: var(--text-primary);
+/* Specialties Section */
+.specialtiesSection {
+  padding: 8rem 2rem;
+  background-color: #070A10;
+  border-top: 1px solid var(--border-color);
 }
 
-.ctas {
+.specialtiesGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+}
+
+.specialtyCard {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  transition: var(--transition-smooth);
+}
+
+.specialtyCard:hover {
+  transform: translateY(-8px);
+  border-color: rgba(224, 90, 22, 0.3);
+  box-shadow: var(--shadow-elite);
+}
+
+.specialtyImageContainer {
+  position: relative;
+  height: 340px;
+  overflow: hidden;
+}
+
+.specialtyImage {
   width: 100%;
-  max-width: 440px;
-  gap: 16px;
-  font-size: 14px;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.ctas a {
+.specialtyCard:hover .specialtyImage {
+  transform: scale(1.05);
+}
+
+.specialtyOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top, rgba(7, 10, 16, 0.8) 0%, transparent 100%);
+}
+
+.specialtyContent {
+  padding: 3rem 2.5rem;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  gap: 1.25rem;
+  flex-grow: 1;
+}
+
+.specialtyContent h3 {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.specialtyContent p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+.specialtyLink {
+  margin-top: 1rem;
+  display: inline-flex;
   align-items: center;
-  height: 40px;
-  padding: 0 16px;
-  border-radius: 128px;
-  border: 1px solid transparent;
-  transition: 0.2s;
-  cursor: pointer;
-  width: fit-content;
-  font-weight: 500;
+  gap: 0.5rem;
+  color: var(--orange);
+  font-weight: 600;
+  font-size: 1rem;
 }
 
-a.primary {
-  background: var(--text-primary);
-  color: var(--background);
-  gap: 8px;
+.specialtyLink span {
+  position: relative;
 }
 
-a.secondary {
-  border-color: var(--button-secondary-border);
+.specialtyLink span::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--orange);
+  transition: var(--transition-smooth);
 }
 
-/* Enable hover only on non-touch devices */
-@media (hover: hover) and (pointer: fine) {
-  a.primary:hover {
-    background: var(--button-primary-hover);
-    border-color: transparent;
-  }
+.specialtyCard:hover .specialtyLink span::after {
+  width: 100%;
+}
 
-  a.secondary:hover {
-    background: var(--button-secondary-hover);
-    border-color: transparent;
+.specialtyCard:hover .specialtyLink svg {
+  transform: translateX(-5px);
+  transition: var(--transition-smooth);
+}
+
+/* CTA Section */
+.ctaSection {
+  position: relative;
+  padding: 10rem 2rem;
+  background-image: url('/hero-attached.jpg');
+  background-size: cover;
+  background-position: center;
+  text-align: center;
+  border-top: 1px solid var(--border-color);
+}
+
+.ctaOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(7, 10, 16, 0.85) 0%, rgba(7, 10, 16, 0.95) 100%);
+  z-index: 1;
+}
+
+.ctaContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.ctaContainer h2 {
+  font-size: 2.85rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #fff;
+}
+
+.ctaContainer p {
+  font-size: 1.15rem;
+  color: #D1D5DB;
+  line-height: 1.8;
+  margin-bottom: 3rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ctaButtons {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+@media (max-width: 992px) {
+  .specialtiesGrid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  .specialtyImageContainer {
+    height: 280px;
   }
 }
 
-@media (max-width: 600px) {
-  .main {
-    padding: 48px 24px;
+@media (max-width: 768px) {
+  .valuesSection, .specialtiesSection {
+    padding: 5rem 1.5rem;
   }
-
-  .intro {
-    gap: 16px;
+  .sectionTitle {
+    font-size: 2rem;
   }
-
-  .intro h1 {
-    font-size: 32px;
-    line-height: 40px;
-    letter-spacing: -1.92px;
+  .ctaSection {
+    padding: 6rem 1.5rem;
   }
-}
-
-@media (prefers-color-scheme: dark) {
-  .logo {
-    filter: invert();
+  .ctaContainer h2 {
+    font-size: 2rem;
   }
-
-  .page {
-    --background: #000;
-    --foreground: #000;
-
-    --text-primary: #ededed;
-    --text-secondary: #999;
-
-    --button-primary-hover: #ccc;
-    --button-secondary-hover: #1a1a1a;
-    --button-secondary-border: #1a1a1a;
+  .ctaButtons {
+    flex-direction: column;
+    gap: 1rem;
   }
 }
+

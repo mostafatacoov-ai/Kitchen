@@ -1,0 +1,155 @@
+.portfolioSection {
+  padding: 8rem 2rem;
+  max-width: 1300px;
+  margin: 0 auto;
+  min-height: calc(100vh - 80px);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.tagline {
+  color: var(--orange);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.title {
+  font-size: 2.75rem;
+  color: var(--foreground);
+  font-weight: 700;
+}
+
+.divider {
+  width: 50px;
+  height: 3px;
+  background-color: var(--orange);
+  margin: 1.25rem auto 0;
+  border-radius: 2px;
+  box-shadow: 0 0 10px rgba(224, 90, 22, 0.5);
+}
+
+.filters {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 4rem;
+  flex-wrap: wrap;
+}
+
+.filterBtn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  padding: 0.65rem 1.85rem;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  transition: var(--transition-smooth);
+}
+
+.filterBtn:hover {
+  border-color: var(--orange);
+  color: var(--foreground);
+}
+
+.activeFilter {
+  border-color: var(--orange) !important;
+  background: var(--orange) !important;
+  color: #fff !important;
+  box-shadow: var(--glow-orange);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 2.5rem;
+}
+
+.gridItem {
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  height: 340px;
+  border: 1px solid var(--border-color);
+  background-color: var(--surface);
+  transition: var(--transition-smooth);
+}
+
+.gridItem:hover {
+  transform: translateY(-5px);
+  border-color: rgba(224, 90, 22, 0.25);
+  box-shadow: var(--shadow-elite);
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gridItem:hover .image {
+  transform: scale(1.05);
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(7, 10, 16, 0.95) 0%, rgba(7, 10, 16, 0.7) 60%, transparent 100%);
+  padding: 2.5rem 1.75rem 1.75rem;
+  color: var(--foreground);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  transition: var(--transition-smooth);
+}
+
+.overlayTitle {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #fff;
+  transition: var(--transition-smooth);
+}
+
+.overlayCategory {
+  font-size: 0.85rem;
+  color: var(--orange);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.gridItem:hover .overlayTitle {
+  color: var(--orange-light);
+}
+
+@media (max-width: 768px) {
+  .portfolioSection {
+    padding: 5rem 1.5rem;
+  }
+  .title {
+    font-size: 2rem;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+

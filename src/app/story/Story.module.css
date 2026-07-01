@@ -1,0 +1,225 @@
+.storySection {
+  padding: 8rem 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  min-height: calc(100vh - 80px);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 5rem;
+}
+
+.title {
+  font-size: 2.75rem;
+  color: var(--foreground);
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.divider {
+  width: 50px;
+  height: 3px;
+  background-color: var(--orange);
+  margin: 1.25rem auto 0;
+  border-radius: 2px;
+  box-shadow: 0 0 10px rgba(224, 90, 22, 0.5);
+}
+
+/* CEO Section */
+.ceoSection {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  margin-bottom: 8rem;
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  padding: 3rem;
+  border-radius: 12px;
+  transition: var(--transition-smooth);
+}
+
+.ceoSection:hover {
+  border-color: rgba(224, 90, 22, 0.2);
+  box-shadow: var(--shadow-elite);
+}
+
+.ceoImageContainer {
+  flex: 0 0 250px;
+  height: 250px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--gold);
+  box-shadow: var(--glow-orange);
+}
+
+.ceoImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ceoContent {
+  flex: 1;
+  text-align: right;
+}
+
+.ceoName {
+  font-size: 2rem;
+  color: var(--foreground);
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.ceoTitle {
+  font-size: 1.1rem;
+  color: var(--gold);
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.ceoBio {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  line-height: 1.85;
+  text-align: justify;
+}
+
+/* Timeline */
+.timeline {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 0;
+}
+
+/* Vertical line in the middle */
+.timeline::after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  background: linear-gradient(180deg, var(--gold) 0%, var(--orange) 50%, rgba(224, 90, 22, 0.1) 100%);
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.timelineItem {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  margin-bottom: 4rem;
+  position: relative;
+}
+
+/* Alternating sides for desktop */
+.timelineItemLeft {
+  justify-content: flex-start;
+}
+
+.timelineItemRight {
+  justify-content: flex-end;
+}
+
+.timelineItemContent {
+  width: 45%;
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  padding: 2.25rem;
+  border-radius: 8px;
+  position: relative;
+  transition: var(--transition-smooth);
+  text-align: right;
+}
+
+.timelineItemContent:hover {
+  transform: translateY(-5px);
+  border-color: rgba(224, 90, 22, 0.3);
+  box-shadow: var(--shadow-elite);
+}
+
+.timelineItemContent h2 {
+  font-size: 1.35rem;
+  color: #fff;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.timelineItemContent p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+/* Timeline Dots */
+.dot {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background-color: var(--background);
+  border: 3px solid var(--orange);
+  top: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  z-index: 2;
+  box-shadow: 0 0 10px var(--orange);
+  transition: var(--transition-smooth);
+}
+
+.timelineItemContent:hover ~ .dot {
+  background-color: var(--orange);
+  transform: translateX(-50%) scale(1.2);
+  box-shadow: 0 0 15px var(--orange);
+}
+
+/* Responsive styles */
+@media (max-width: 992px) {
+  .ceoSection {
+    flex-direction: column;
+    text-align: center;
+    padding: 2.5rem 1.5rem;
+    gap: 2rem;
+  }
+  
+  .ceoContent {
+    text-align: center;
+  }
+  
+  .ceoBio {
+    text-align: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .timeline::after {
+    left: calc(100% - 20px);
+  }
+  
+  .timelineItem {
+    justify-content: flex-start;
+    padding-right: 50px;
+    margin-bottom: 3rem;
+  }
+  
+  .timelineItemContent {
+    width: 100%;
+  }
+  
+  .dot {
+    left: calc(100% - 20px);
+    transform: translateX(-50%);
+  }
+  
+  .timelineItemContent:hover ~ .dot {
+    transform: translateX(-50%) scale(1.2);
+  }
+}
+
