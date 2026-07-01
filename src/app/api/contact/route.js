@@ -42,8 +42,12 @@ export async function POST(request) {
       const encodedMsg = encodeURIComponent(message);
       const url = `https://api.callmebot.com/whatsapp.php?phone=${cleanPhone}&text=${encodedMsg}&apikey=${whatsappApiKey}`;
       
-      // Fire-and-forget request to callmebot
-      fetch(url).catch(err => console.error('CallMeBot notification failed:', err));
+      // Await request to callmebot to ensure host platforms (like Hostinger/Vercel) do not terminate the process beforehand
+      try {
+        await fetch(url);
+      } catch (err) {
+        console.error('CallMeBot notification failed:', err);
+      }
     }
 
     return NextResponse.json({ success: true, request: newRequest });
