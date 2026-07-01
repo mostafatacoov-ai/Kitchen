@@ -1,11 +1,44 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
 
 function verifyPasskey(request) {
   const passkey = request.headers.get('x-admin-passkey');
   const expectedPasskey = process.env.ADMIN_PASSKEY || '123456';
   return passkey === expectedPasskey;
+}
+
+async function getFilePath() {
+  const path = await import('path');
+  return path.join(process.cwd(), 'src/data/requests.json');
+}
+
+async function readRequests() {
+  try {
+    const fs = await import('fs');
+    const filePath = await getFilePath();
+    if (fs.existsSync(filePath)) {
+      const fileData = fs.readFileSync(filePath, 'utf8');
+      try {
+        return JSON.parse(fileData || '[]');
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  } catch {
+    // File system not available (read-only hosting like Hostinger)
+    return [];
+  }
+}
+
+async function writeRequests(requests) {
+  try {
+    const fs = await import('fs');
+    const filePath = await getFilePath();
+    fs.writeFileSync(filePath, JSON.stringify(requests, null, 2), 'utf8');
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export async function GET(request) {
@@ -14,16 +47,8 @@ export async function GET(request) {
   }
 
   try {
-    const filePath = path.join(process.cwd(), 'src/data/requests.json');
-    let requests = [];
-    if (fs.existsSync(filePath)) {
-      const fileData = fs.readFileSync(filePath, 'utf8');
-      requests = JSON.parse(fileData || '[]');
-    }
-
-    // Sort by createdAt descending
+    const requests = await readRequests();
     requests.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
     return NextResponse.json({ success: true, requests });
   } catch (error) {
     console.error('Fetch requests error:', error);
@@ -44,14 +69,7 @@ export async function DELETE(request) {
       return NextResponse.json({ success: false, error: 'ID is required' }, { status: 400 });
     }
 
-    const filePath = path.join(process.cwd(), 'src/data/requests.json');
-    if (!fs.existsSync(filePath)) {
-      return NextResponse.json({ success: false, error: 'Database file not found' }, { status: 404 });
-    }
-
-    const fileData = fs.readFileSync(filePath, 'utf8');
-    let requests = JSON.parse(fileData || '[]');
-    
+    let requests = await readRequests();
     const initialLength = requests.length;
     requests = requests.filter(r => r.id !== id);
 
@@ -59,7 +77,7 @@ export async function DELETE(request) {
       return NextResponse.json({ success: false, error: 'Request not found' }, { status: 404 });
     }
 
-    fs.writeFileSync(filePath, JSON.stringify(requests, null, 2), 'utf8');
+    await writeRequests(requests);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Delete request error:', error);
