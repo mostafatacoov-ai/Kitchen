@@ -1,12 +1,15 @@
 "use client";
 import { motion } from 'framer-motion';
 import { Upload, Send } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 import styles from './Contact.module.css';
 
 export default function ContactPage() {
+  const { t } = useLanguage();
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("تم استلام طلبك بنجاح! سنتواصل معك قريباً.");
+    alert(t('contact.alertSuccess'));
   };
 
   return (
@@ -18,7 +21,7 @@ export default function ContactPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          طلب تصميم جديد
+          {t('contact.title')}
         </motion.h1>
         <motion.p 
           className={styles.subtitle}
@@ -26,7 +29,7 @@ export default function ContactPage() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          أدخل بياناتك وسنقوم بالتواصل معك لتحديد موعد لمعاينة المساحة ومناقشة التفاصيل.
+          {t('contact.subtitle')}
         </motion.p>
       </div>
 
@@ -38,36 +41,36 @@ export default function ContactPage() {
       >
         <form onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
-            <label className={styles.label}>الاسم الكامل</label>
-            <input type="text" className={styles.input} required placeholder="أدخل اسمك الكامل" />
+            <label className={styles.label}>{t('contact.fullNameLabel')}</label>
+            <input type="text" className={styles.input} required placeholder={t('contact.fullNamePlaceholder')} />
           </div>
 
           <div className={styles.formGroup}>
-            <label className={styles.label}>رقم الهاتف</label>
-            <input type="tel" className={styles.input} required placeholder="أدخل رقم هاتفك" />
+            <label className={styles.label}>{t('contact.phoneLabel')}</label>
+            <input type="tel" className={styles.input} required placeholder={t('contact.phonePlaceholder')} />
           </div>
 
           <div className={styles.formGroup}>
-            <label className={styles.label}>مساحة المطبخ (تقريباً)</label>
-            <input type="text" className={styles.input} placeholder="مثال: 4x3 متر" />
+            <label className={styles.label}>{t('contact.kitchenAreaLabel')}</label>
+            <input type="text" className={styles.input} placeholder={t('contact.kitchenAreaPlaceholder')} />
           </div>
 
           <div className={styles.formGroup}>
-            <label className={styles.label}>الستايل المفضل</label>
+            <label className={styles.label}>{t('contact.favStyleLabel')}</label>
             <select className={styles.select} required defaultValue="">
-              <option value="" disabled>اختر الستايل</option>
-              <option value="modern">مودرن (Modern)</option>
-              <option value="classic">كلاسيك (Classic)</option>
-              <option value="neo-classic">نيو كلاسيك (Neo-Classic)</option>
+              <option value="" disabled>{t('contact.chooseStyleOption')}</option>
+              <option value="modern">{t('contact.modernOption')}</option>
+              <option value="classic">{t('contact.classicOption')}</option>
+              <option value="neo-classic">{t('contact.neoClassicOption')}</option>
             </select>
           </div>
 
           <div className={styles.formGroup}>
-            <label className={styles.label}>إرفاق ملفات (مخطط أو صور استرشادية)</label>
+            <label className={styles.label}>{t('contact.attachFilesLabel')}</label>
             <div className={styles.fileInputContainer}>
               <div className={styles.fileBtn}>
                 <Upload size={20} />
-                <span>اختر ملفاً لرفعه</span>
+                <span>{t('contact.chooseFileBtn')}</span>
               </div>
               <input type="file" className={styles.fileInput} multiple />
             </div>
@@ -75,7 +78,7 @@ export default function ContactPage() {
 
           <button type="submit" className={styles.submitBtn}>
             <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-              إرسال الطلب <Send size={20} />
+              {t('contact.submitRequestBtn')} <Send size={20} style={{ transform: t('dir') === 'rtl' ? 'scaleX(-1)' : 'none' }} />
             </span>
           </button>
         </form>
@@ -83,3 +86,4 @@ export default function ContactPage() {
     </div>
   );
 }
+

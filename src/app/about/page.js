@@ -1,9 +1,11 @@
 "use client";
 import { motion } from 'framer-motion';
+import { useLanguage } from '../../context/LanguageContext';
 import styles from './About.module.css';
 
 export default function AboutPage() {
-  const textContent = "نحن وجهتك المتخصصة في تصميم وتصنيع المطابخ (الكلاسيك، المودرن، والنيو كلاسيك) بمعايير جودة عالمية. نقدم مرونة بلا حدود، استغلال ذكي للمساحات، وخامات تعيش عمراً لتحقيق المعادلة الصعبة بين الجودة والسعر المعتدل.";
+  const { t } = useLanguage();
+  const textContent = t('about.text');
   const words = textContent.split(" ");
 
   const containerVariants = {
@@ -41,7 +43,15 @@ export default function AboutPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          من <span className={styles.highlight}>نحن</span>
+          {t('about.title') === "About Us" ? (
+            <>
+              About <span className={styles.highlight}>Us</span>
+            </>
+          ) : (
+            <>
+              من <span className={styles.highlight}>نحن</span>
+            </>
+          )}
         </motion.h1>
         
         <motion.p 
@@ -60,3 +70,4 @@ export default function AboutPage() {
     </div>
   );
 }
+

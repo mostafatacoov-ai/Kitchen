@@ -3,9 +3,12 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Hero from '../components/Hero';
 import { Shield, Sparkles, LayoutGrid, ArrowLeft } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 import styles from './page.module.css';
 
 export default function Home() {
+  const { t } = useLanguage();
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -33,8 +36,8 @@ export default function Home() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <span className={styles.tagline}>فلسفتنا في العمل</span>
-            <h2 className={styles.sectionTitle}>لماذا تختار مطابخنا؟</h2>
+            <span className={styles.tagline}>{t('home.philosophy')}</span>
+            <h2 className={styles.sectionTitle}>{t('home.whyChooseUs')}</h2>
             <div className={styles.divider}></div>
           </motion.div>
 
@@ -49,24 +52,24 @@ export default function Home() {
               <div className={styles.iconWrapper}>
                 <Shield size={32} className={styles.valueIcon} />
               </div>
-              <h3>جودة تدوم طويلاً</h3>
-              <p>نعتمد على أجود أنواع الأخشاب الطبيعية، الإكسسوارات المقاومة للرطوبة، والمفصلات النمساوية (مثل Blum) لضمان عمر افتراضي ممتد.</p>
+              <h3>{t('home.qualityTitle')}</h3>
+              <p>{t('home.qualityDesc')}</p>
             </motion.div>
 
             <motion.div className={styles.valueCard} variants={itemVariants}>
               <div className={styles.iconWrapper}>
                 <LayoutGrid size={32} className={styles.valueIcon} />
               </div>
-              <h3>تصاميم ذكية وعصرية</h3>
-              <p>نستغل كل سنتيمتر في مطبخك بتصاميم ذكية تحقق مثلث الحركة المثالي، وتوفر مساحات تخزين مخفية ومريحة للغاية.</p>
+              <h3>{t('home.smartDesignTitle')}</h3>
+              <p>{t('home.smartDesignDesc')}</p>
             </motion.div>
 
             <motion.div className={styles.valueCard} variants={itemVariants}>
               <div className={styles.iconWrapper}>
                 <Sparkles size={32} className={styles.valueIcon} />
               </div>
-              <h3>لمسة جمالية راقية</h3>
-              <p>كل تفصيل يتم تصميمه بعناية فائقة ليعكس هويتك الشخصية، ويخلق توازناً فنياً متكاملاً بين الخامات والألوان والإضاءة.</p>
+              <h3>{t('home.aestheticTitle')}</h3>
+              <p>{t('home.aestheticDesc')}</p>
             </motion.div>
           </motion.div>
         </div>
@@ -82,8 +85,8 @@ export default function Home() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <span className={styles.tagline}>تخصصاتنا الفريدة</span>
-            <h2 className={styles.sectionTitle}>اختر طراز مطبخك المفضل</h2>
+            <span className={styles.tagline}>{t('home.specialtiesTagline')}</span>
+            <h2 className={styles.sectionTitle}>{t('home.specialtiesTitle')}</h2>
             <div className={styles.divider}></div>
           </motion.div>
 
@@ -105,10 +108,10 @@ export default function Home() {
                 <div className={styles.specialtyOverlay}></div>
               </div>
               <div className={styles.specialtyContent}>
-                <h3>المطابخ المودرن (Modern)</h3>
-                <p>تتميز بالبساطة والخطوط النظيفة، الأسطح الملساء، واستخدام التكنولوجيا المدمجة وتفاصيل الإضاءة المخفية، لتمنحك مساحة عمل عملية وفائقة الأناقة.</p>
+                <h3>{t('home.modernKitchen')}</h3>
+                <p>{t('home.modernDesc')}</p>
                 <Link href="/portfolio?filter=Modern" className={styles.specialtyLink}>
-                  <span>استكشف تصاميم المودرن</span> <ArrowLeft size={16} />
+                  <span>{t('home.exploreModern')}</span> <ArrowLeft size={16} style={{ transform: t('dir') === 'ltr' ? 'rotate(180deg)' : 'none' }} />
                 </Link>
               </div>
             </motion.div>
@@ -130,10 +133,10 @@ export default function Home() {
                 <div className={styles.specialtyOverlay}></div>
               </div>
               <div className={styles.specialtyContent}>
-                <h3>نيو كلاسيك / سيمي مودرن</h3>
-                <p>المزيج المثالي بين فخامة الكلاسيك ودفئه، وعملية المودرن وحيويته. نستخدم كرانيش وتفاصيل خشبية ناعمة مع أحدث الإكسسوارات الداخلية المريحة.</p>
+                <h3>{t('home.neoClassic')}</h3>
+                <p>{t('home.neoClassicDesc')}</p>
                 <Link href="/portfolio?filter=Semi-Modern" className={styles.specialtyLink}>
-                  <span>استكشف تصاميم النيو كلاسيك</span> <ArrowLeft size={16} />
+                  <span>{t('home.exploreNeoClassic')}</span> <ArrowLeft size={16} style={{ transform: t('dir') === 'ltr' ? 'rotate(180deg)' : 'none' }} />
                 </Link>
               </div>
             </motion.div>
@@ -152,14 +155,14 @@ export default function Home() {
             transition={{ duration: 0.8 }}
             style={{ zIndex: 2, position: 'relative' }}
           >
-            <h2>هل ترغب في تصميم مطبخ أحلامك؟</h2>
-            <p>فريقنا من المهندسين والحرفيين مستعد لمساعدتك في تخطيط وتصميم مطبخك بالتفصيل ودراسة المساحة مجاناً.</p>
+            <h2>{t('home.dreamKitchenTitle')}</h2>
+            <p>{t('home.dreamKitchenDesc')}</p>
             <div className={styles.ctaButtons}>
               <Link href="/contact" className="btn-premium">
-                ابدأ رحلة تصميمك الآن
+                {t('home.startDesignNow')}
               </Link>
               <Link href="/story" className="btn-outline" style={{ border: '1px solid rgba(255,255,255,0.3)', color: '#fff' }}>
-                تعرف على قصتنا ورؤيتنا
+                {t('home.learnOurStory')}
               </Link>
             </div>
           </motion.div>
@@ -168,4 +171,5 @@ export default function Home() {
     </div>
   );
 }
+
 

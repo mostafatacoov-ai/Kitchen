@@ -1,22 +1,25 @@
 "use client";
 import { motion } from 'framer-motion';
+import { useLanguage } from '../../context/LanguageContext';
 import styles from './Story.module.css';
 
 export default function StoryPage() {
+  const { t } = useLanguage();
+
   const steps = [
     {
-      title: "البداية والشغف",
-      text: "بدأ المؤسس محمد طاحون رحلته بشغف خالص وحب عميق لتفاصيل الأخشاب، في ورشة صغيرة تضم عاملين فقط.",
+      title: t('story.steps.0.title'),
+      text: t('story.steps.0.text'),
       side: "right"
     },
     {
-      title: "النمو والتطور",
-      text: "مع الالتزام بالجودة والدقة، بدأت الورشة في جذب المزيد من العملاء، مما تطلب توسيع المساحة وزيادة العمالة والمعدات.",
+      title: t('story.steps.1.title'),
+      text: t('story.steps.1.text'),
       side: "left"
     },
     {
-      title: "الكيان المتكامل",
-      text: "اليوم، تحولت الورشة الصغيرة إلى مصنع متكامل ومزود بأحدث التقنيات، ليصبح 'The Kitchen Company' اسماً رائداً في عالم المطابخ.",
+      title: t('story.steps.2.title'),
+      text: t('story.steps.2.text'),
       side: "right"
     }
   ];
@@ -30,7 +33,7 @@ export default function StoryPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          قصتنا
+          {t('story.title')}
         </motion.h1>
         <motion.p 
           className={styles.subtitle}
@@ -38,7 +41,7 @@ export default function StoryPage() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          شغف بالخشب، ورحلة من ورشة صغيرة إلى كيان متكامل
+          {t('story.subtitle')}
         </motion.p>
         <div className={styles.divider}></div>
       </div>
@@ -53,10 +56,10 @@ export default function StoryPage() {
           <img src="/ceo.jpg" alt="Mohamed Tahoun - CEO" className={styles.ceoImage} />
         </div>
         <div className={styles.ceoContent}>
-          <h2 className={styles.ceoName}>محمد طاحون</h2>
-          <h3 className={styles.ceoTitle}>المؤسس والمدير التنفيذي</h3>
+          <h2 className={styles.ceoName}>{t('story.ceoName')}</h2>
+          <h3 className={styles.ceoTitle}>{t('story.ceoTitle')}</h3>
           <p className={styles.ceoBio}>
-            "نؤمن بأن المطبخ ليس مجرد مساحة للطهي، بل هو قلب المنزل النابض بالحياة. انطلقنا من شغف عميق بتفاصيل الأخشاب لتقديم تصاميم تجمع بين الجودة العالية والجماليات العصرية، لنصنع بيئة تعكس شخصية كل عائلة."
+            {t('story.ceoBio')}
           </p>
         </div>
       </motion.div>
@@ -82,4 +85,5 @@ export default function StoryPage() {
     </div>
   );
 }
+
 

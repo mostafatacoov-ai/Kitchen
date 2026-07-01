@@ -67,7 +67,6 @@
 
 /* Mobile dropdown styles */
 .mobileDropdown {
-  padding: 1.5rem;
   background: rgba(7, 10, 16, 0.95);
   backdrop-filter: blur(15px);
   border-bottom: 1px solid var(--border-color);
@@ -77,7 +76,11 @@
   right: 0;
   z-index: 999;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-  animation: slideDown 0.3s ease-out forwards;
+  overflow: hidden;
+}
+
+.mobileDropdownInner {
+  padding: 1.5rem;
 }
 
 .mobileNavLink {
@@ -87,18 +90,52 @@
   display: block;
 }
 
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+
+/* Mobile responsive & actions */
+.mobileActions {
+  display: none;
+  gap: 1.25rem;
+  align-items: center;
 }
 
-/* Mobile responsive */
+.mobileLangToggle {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  padding: 0.35rem 0.65rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.mobileLangToggle:hover {
+  color: var(--orange);
+  border-color: rgba(224, 90, 22, 0.3);
+}
+
+.langToggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 0.4rem 0.75rem;
+  border-radius: 4px;
+  transition: var(--transition-smooth);
+  border: 1px solid transparent;
+}
+
+.langToggle:hover {
+  color: var(--orange);
+  border-color: rgba(224, 90, 22, 0.15);
+  background: rgba(224, 90, 22, 0.04);
+}
+
 .mobileMenuBtn {
   display: none;
   background: none;
@@ -116,8 +153,12 @@
   .nav {
     display: none;
   }
+  .mobileActions {
+    display: flex;
+  }
   .mobileMenuBtn {
     display: block;
   }
 }
+
 

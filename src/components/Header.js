@@ -2,19 +2,22 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Globe } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguage } from '../context/LanguageContext';
 import styles from './Header.module.css';
 
 export default function Header() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { lang, toggleLanguage, t, mounted } = useLanguage();
 
   const links = [
-    { href: '/', label: 'الرئيسية' },
-    { href: '/about', label: 'من نحن' },
-    { href: '/story', label: 'قصتنا' },
-    { href: '/portfolio', label: 'أعمالنا' },
-    { href: '/contact', label: 'تواصل معنا' },
+    { href: '/', label: t('nav.home') },
+    { href: '/about', label: t('nav.about') },
+    { href: '/story', label: t('nav.story') },
+    { href: '/portfolio', label: t('nav.portfolio') },
+    { href: '/contact', label: t('nav.contact') },
   ];
 
   return (
@@ -38,55 +41,78 @@ export default function Header() {
             );
           })}
           <Link href="/contact" className="btn-premium" style={{ padding: '0.6rem 1.5rem', fontSize: '0.95rem' }}>
-            اطلب عرض سعر
+            {t('nav.requestQuote')}
           </Link>
+          <button onClick={toggleLanguage} className={styles.langToggle} aria-label="Toggle Language">
+            <Globe size={18} />
+            <span>{lang === 'ar' ? 'English' : 'العربية'}</span>
+          </button>
         </nav>
 
-        <button 
-          className={styles.mobileMenuBtn} 
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label="Toggle Menu"
-        >
-          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        <div className={styles.mobileActions}>
+          <button onClick={toggleLanguage} className={styles.mobileLangToggle} aria-label="Toggle Language">
+            <Globe size={20} />
+            <span>{lang === 'ar' ? 'EN' : 'AR'}</span>
+          </button>
+
+          <button 
+            className={styles.mobileMenuBtn} 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle Menu"
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
-      {isMobileMenuOpen && (
-        <div className={styles.mobileDropdown}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            {links.map((link) => {
-              const isActive = pathname === link.href;
-              return (
+      {/* Mobile Menu Dropdown Accordion */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div 
+            className={styles.mobileDropdown}
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className={styles.mobileDropdownInner}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                {links.map((link) => {
+                  const isActive = pathname === link.href;
+                  return (
+                    <Link 
+                      key={link.href} 
+                      href={link.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={styles.mobileNavLink}
+                      style={{
+                        color: isActive ? 'var(--orange)' : 'var(--foreground)'
+                      }}
+                    >
+                      {link.label}
+                    </Link>
+                  );
+                })}
                 <Link 
-                  key={link.href} 
-                  href={link.href}
+                  href="/contact" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={styles.mobileNavLink}
+                  className="btn-premium"
                   style={{
-                    color: isActive ? 'var(--orange)' : 'var(--foreground)'
+                    width: '100%',
+                    padding: '0.85rem',
+                    textAlign: 'center',
+                    marginTop: '0.5rem'
                   }}
                 >
-                  {link.label}
+                  {t('nav.requestQuote')}
                 </Link>
-              );
-            })}
-            <Link 
-              href="/contact" 
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="btn-premium"
-              style={{
-                width: '100%',
-                padding: '0.85rem',
-                textAlign: 'center',
-                marginTop: '0.5rem'
-              }}
-            >
-              اطلب عرض سعر
-            </Link>
-          </div>
-        </div>
-      )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }
+
+
