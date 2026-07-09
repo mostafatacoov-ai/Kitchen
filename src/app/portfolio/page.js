@@ -119,6 +119,7 @@ function PortfolioContent() {
                       {project.category}
                     </span>
                     <h3 className={styles.overlayTitle}>{project.title[language]}</h3>
+                    <p className={styles.overlayDesc}>{project.description[language]}</p>
                   </div>
                 </div>
               </motion.div>
@@ -148,30 +149,39 @@ function PortfolioContent() {
                 <X size={24} />
               </button>
               
-              <img 
-                src={selectedProject.images[activeImageIndex]} 
-                alt={`${selectedProject.title[language]} - Image ${activeImageIndex + 1}`} 
-                className={styles.modalMainImage}
-              />
-              
-              {selectedProject.images.length > 1 && (
-                <div className={styles.thumbnailContainer}>
-                  {selectedProject.images.map((img, index) => (
-                    <img 
-                      key={index}
-                      src={img}
-                      alt={`Thumbnail ${index + 1}`}
-                      className={`${styles.thumbnail} ${index === activeImageIndex ? styles.activeThumbnail : ''}`}
-                      onClick={() => setActiveImageIndex(index)}
-                    />
-                  ))}
-                </div>
-              )}
+              <div className={styles.modalImageSection}>
+                <img 
+                  src={selectedProject.images[activeImageIndex]} 
+                  alt="" 
+                  className={styles.modalBlurredBg}
+                />
+                <img 
+                  src={selectedProject.images[activeImageIndex]} 
+                  alt={`${selectedProject.title[language]} - Image ${activeImageIndex + 1}`} 
+                  className={styles.modalMainImage}
+                />
+              </div>
 
-              <div className={styles.modalInfo}>
-                <span className={styles.modalCategory}>{selectedProject.category}</span>
-                <h2>{selectedProject.title[language]}</h2>
-                <p className={styles.modalDesc}>{selectedProject.description[language]}</p>
+              <div className={styles.modalSidebar}>
+                <div className={styles.modalInfo}>
+                  <span className={styles.modalCategory}>{selectedProject.category}</span>
+                  <h2>{selectedProject.title[language]}</h2>
+                  <p className={styles.modalDesc}>{selectedProject.description[language]}</p>
+                </div>
+                
+                {selectedProject.images.length > 1 && (
+                  <div className={styles.thumbnailContainer}>
+                    {selectedProject.images.map((img, index) => (
+                      <img 
+                        key={index}
+                        src={img}
+                        alt={`Thumbnail ${index + 1}`}
+                        className={`${styles.thumbnail} ${index === activeImageIndex ? styles.activeThumbnail : ''}`}
+                        onClick={() => setActiveImageIndex(index)}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
             </motion.div>
           </motion.div>
