@@ -303,3 +303,198 @@
     justify-content: center;
   }
 }
+
+/* Tabs Styles */
+.tabsContainer {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1rem;
+}
+
+.tabBtn {
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  border-radius: 4px;
+}
+
+.tabBtn:hover {
+  color: var(--foreground);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.activeTab {
+  color: var(--orange);
+  background: rgba(224, 90, 22, 0.1);
+  box-shadow: 0 0 10px rgba(224, 90, 22, 0.05);
+}
+
+/* Projects Manager Styles */
+.projectsManager {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.projectFormCard {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  padding: 2.5rem;
+  border-radius: 8px;
+  box-shadow: var(--shadow-elite);
+}
+
+.projectFormCard h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--gold);
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formGroup.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.formGroup label {
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.formInput {
+  padding: 0.85rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--foreground);
+  font-size: 1rem;
+  font-family: inherit;
+  transition: var(--transition-smooth);
+}
+
+.formInput:focus {
+  outline: none;
+  border-color: var(--orange);
+  box-shadow: 0 0 5px rgba(224, 90, 22, 0.2);
+}
+
+textarea.formInput {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.submitBtn {
+  margin-top: 1.5rem;
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, var(--orange) 0%, #B8430B 100%);
+  color: #fff;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: var(--glow-orange);
+  transition: var(--transition-smooth);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.submitBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(224, 90, 22, 0.3);
+}
+
+.submitBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.projectList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.projectCard {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.projectImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.projectInfo {
+  padding: 1.5rem;
+}
+
+.projectInfo h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: var(--foreground);
+}
+
+.projectCategory {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: rgba(197, 168, 128, 0.1);
+  color: var(--gold);
+  border-radius: 20px;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.deleteProjectBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.9);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.deleteProjectBtn:hover {
+  background: #ef4444;
+  transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
