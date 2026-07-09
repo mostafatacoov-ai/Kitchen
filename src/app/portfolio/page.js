@@ -10,7 +10,7 @@ function PortfolioContent() {
   const searchParams = useSearchParams();
   const filterParam = searchParams.get('filter');
   const [activeFilter, setActiveFilter] = useState("All");
-  const { t, language } = useLanguage();
+  const { t, lang } = useLanguage();
   
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -113,13 +113,13 @@ function PortfolioContent() {
                 style={{ cursor: 'pointer' }}
               >
                 <div className={styles.imageWrapper}>
-                  <img src={project.images[0]} alt={project.title[language]} className={styles.image} />
+                  <img src={project.images[0]} alt={project.title[lang]} className={styles.image} />
                   <div className={styles.overlay}>
                     <span className={styles.overlayCategory}>
                       {project.category}
                     </span>
-                    <h3 className={styles.overlayTitle}>{project.title[language]}</h3>
-                    <p className={styles.overlayDesc}>{project.description[language]}</p>
+                    <h3 className={styles.overlayTitle}>{project.title[lang]}</h3>
+                    <p className={styles.overlayDesc}>{project.description[lang]}</p>
                   </div>
                 </div>
               </motion.div>
@@ -157,7 +157,7 @@ function PortfolioContent() {
                 />
                 <img 
                   src={selectedProject.images[activeImageIndex]} 
-                  alt={`${selectedProject.title[language]} - Image ${activeImageIndex + 1}`} 
+                  alt={`${selectedProject.title[lang]} - Image ${activeImageIndex + 1}`} 
                   className={styles.modalMainImage}
                 />
               </div>
@@ -165,8 +165,8 @@ function PortfolioContent() {
               <div className={styles.modalSidebar}>
                 <div className={styles.modalInfo}>
                   <span className={styles.modalCategory}>{selectedProject.category}</span>
-                  <h2>{selectedProject.title[language]}</h2>
-                  <p className={styles.modalDesc}>{selectedProject.description[language]}</p>
+                  <h2>{selectedProject.title[lang]}</h2>
+                  <p className={styles.modalDesc}>{selectedProject.description[lang]}</p>
                 </div>
                 
                 {selectedProject.images.length > 1 && (
