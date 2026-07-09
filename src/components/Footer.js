@@ -51,7 +51,7 @@ export default function Footer() {
           </div>
           <div className={styles.contactItem}>
             <Mail className={styles.contactIcon} size={20} />
-            <span>info@thekitchencompany.com</span>
+            <span>info@thekitchen-company.com</span>
           </div>
         </div>
       </div>
