@@ -1,13 +1,25 @@
 "use client";
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Hero from '../components/Hero';
 import { Shield, Sparkles, LayoutGrid, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import IntroVideo from '../components/IntroVideo';
 import styles from './page.module.css';
 
 export default function Home() {
   const { t } = useLanguage();
+  const [showIntro, setShowIntro] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !sessionStorage.getItem('introPlayed')) {
+      const timer = setTimeout(() => {
+        setShowIntro(true);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -23,8 +35,10 @@ export default function Home() {
   };
 
   return (
-    <div style={{ overflow: 'hidden' }}>
-      <Hero />
+    <>
+      {showIntro && <IntroVideo onComplete={() => setShowIntro(false)} />}
+      <div style={{ overflow: 'hidden' }}>
+        <Hero />
 
       {/* Luxury Intro & Values Section */}
       <section className={styles.valuesSection}>
@@ -169,6 +183,7 @@ export default function Home() {
         </div>
       </section>
     </div>
+    </>
   );
 }
 
