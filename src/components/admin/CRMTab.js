@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Loader2, Trash2, Phone, Save, Edit, Plus } from 'lucide-react';
+import { Loader2, Trash2, Phone, Save, Edit, Plus, Users, TrendingUp } from 'lucide-react';
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import styles from '@/app/admin/Admin.module.css';
+
+const COLORS = ['#22c55e', '#3b82f6', '#f59e0b', '#eab308', '#ef4444'];
+const STATUSES = ['New', 'Contacted', 'Meeting Scheduled', 'Qualified', 'Lost'];
 
 export default function CRMTab() {
   const [leads, setLeads] = useState([]);
@@ -32,7 +36,6 @@ export default function CRMTab() {
     const key = localStorage.getItem('admin_passkey');
     try {
       if (id) {
-        // Update
         const res = await fetch('/api/crm', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json', 'x-admin-passkey': key },
@@ -41,7 +44,6 @@ export default function CRMTab() {
         if (res.ok) fetchLeads();
         setEditingId(null);
       } else {
-        // Create
         const res = await fetch('/api/crm', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-admin-passkey': key },
@@ -72,6 +74,19 @@ export default function CRMTab() {
     }
   };
 
+  // Prepare data for charts
+  const statusCounts = STATUSES.map(status => ({
+    name: status,
+    value: leads.filter(l => l.status === status).length
+  })).filter(s => s.value > 0);
+
+  const pipelineValue = STATUSES.map(status => ({
+    name: status,
+    value: leads.filter(l => l.status === status).reduce((sum, l) => sum + (l.expectedValue || 0), 0)
+  }));
+
+  const totalValue = leads.reduce((sum, l) => sum + (l.expectedValue || 0), 0);
+
   return (
     <div className={styles.tabContentPanel}>
       <div className={styles.panelHeader}>
@@ -80,6 +95,56 @@ export default function CRMTab() {
           <Plus size={18} /> إضافة عميل جديد
         </button>
       </div>
+
+      <div className={styles.statsGrid} style={{ marginBottom: '2rem' }}>
+        <div className={styles.statCard}>
+          <h3>إجمالي العملاء</h3>
+          <div className={styles.statNumber} style={{ color: 'var(--foreground)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Users size={24} /> {leads.length}
+          </div>
+        </div>
+        <div className={styles.statCard}>
+          <h3>قيمة المبيعات المحتملة</h3>
+          <div className={styles.statNumber} style={{ color: 'var(--orange)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <TrendingUp size={24} /> {totalValue.toLocaleString()} EGP
+          </div>
+        </div>
+      </div>
+
+      {leads.length > 0 && (
+        <div className={styles.chartsGrid}>
+          <div className={styles.chartCard}>
+            <h3>توزيع العملاء حسب الحالة</h3>
+            <div className={styles.chartWrapper}>
+              <ResponsiveContainer width="100%" height={250}>
+                <PieChart>
+                  <Pie data={statusCounts} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
+                    {statusCounts.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[STATUSES.indexOf(entry.name) % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip contentStyle={{ background: 'var(--surface)', border: '1px solid var(--border-color)', borderRadius: '8px' }} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+          
+          <div className={styles.chartCard}>
+            <h3>حجم المبيعات المتوقع حسب الحالة</h3>
+            <div className={styles.chartWrapper}>
+              <ResponsiveContainer width="100%" height={250}>
+                <BarChart data={pipelineValue} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                  <XAxis dataKey="name" stroke="var(--text-secondary)" fontSize={12} tickFormatter={(val) => val.split(' ')[0]} />
+                  <YAxis stroke="var(--text-secondary)" fontSize={12} width={80} />
+                  <Tooltip contentStyle={{ background: 'var(--surface)', border: '1px solid var(--border-color)', borderRadius: '8px' }} />
+                  <Bar dataKey="value" fill="var(--orange)" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showAddForm && (
         <div className={styles.projectFormCard} style={{ marginBottom: '2rem' }}>
@@ -96,11 +161,7 @@ export default function CRMTab() {
             <div className={styles.formGroup}>
               <label>الحالة</label>
               <select className={styles.formInput} value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})}>
-                <option value="New">جديد (New)</option>
-                <option value="Contacted">تم التواصل (Contacted)</option>
-                <option value="Meeting Scheduled">موعد محدد (Meeting Scheduled)</option>
-                <option value="Qualified">مؤهل (Qualified)</option>
-                <option value="Lost">مفقود (Lost)</option>
+                {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
             <div className={styles.formGroup}>
@@ -148,11 +209,7 @@ export default function CRMTab() {
                          <input type="text" className={styles.formInput} defaultValue={lead.clientName} id={`name-${lead.id}`} />
                          <input type="text" className={styles.formInput} defaultValue={lead.phone} id={`phone-${lead.id}`} />
                          <select className={styles.formInput} defaultValue={lead.status} id={`status-${lead.id}`}>
-                            <option value="New">New</option>
-                            <option value="Contacted">Contacted</option>
-                            <option value="Meeting Scheduled">Meeting Scheduled</option>
-                            <option value="Qualified">Qualified</option>
-                            <option value="Lost">Lost</option>
+                            {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
                          </select>
                          <button className={styles.submitBtn} onClick={() => {
                             const updated = {
@@ -173,10 +230,15 @@ export default function CRMTab() {
                         </div>
                       </td>
                       <td>
-                        <span className={styles.styleBadge}>{lead.status}</span>
+                        <span className={styles.styleBadge} style={{ 
+                          color: COLORS[STATUSES.indexOf(lead.status) % COLORS.length],
+                          background: `${COLORS[STATUSES.indexOf(lead.status) % COLORS.length]}22` 
+                        }}>
+                          {lead.status}
+                        </span>
                       </td>
                       <td>{lead.source}</td>
-                      <td>{lead.expectedValue} EGP</td>
+                      <td>{lead.expectedValue?.toLocaleString()} EGP</td>
                       <td>
                         <div style={{ display: 'flex', gap: '0.5rem' }}>
                           <button onClick={() => setEditingId(lead.id)} className={styles.actionIcon}><Edit size={16} /></button>

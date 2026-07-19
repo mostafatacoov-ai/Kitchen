@@ -194,14 +194,15 @@
   padding: 3rem 4rem;
   max-width: 1400px;
   overflow-y: auto;
+  background: radial-gradient(circle at top right, rgba(197, 168, 128, 0.03), transparent 50%), var(--background);
 }
 
 .tabContentPanel {
-  animation: fadeIn 0.3s ease-in-out;
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(15px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -211,33 +212,42 @@
   align-items: center;
   margin-bottom: 2.5rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
 .panelHeader h2 {
-  font-size: 1.8rem;
+  font-size: 2rem;
   color: var(--foreground);
+  font-weight: 700;
+  letter-spacing: -0.5px;
 }
-
 
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 1.5rem;
 }
 
 .statCard {
-  background: var(--surface);
-  border: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   padding: 2rem;
-  border-radius: 8px;
-  box-shadow: var(--shadow-elite);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.statCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  border-color: rgba(197, 168, 128, 0.2);
 }
 
 .statCard h3 {
-  font-size: 1rem;
+  font-size: 1.05rem;
   color: var(--text-secondary);
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
   font-weight: 500;
 }
 
@@ -247,33 +257,42 @@
   color: var(--foreground);
 }
 
-.tableContainer {
-  background: var(--surface);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  overflow-x: auto;
-  box-shadow: var(--shadow-elite);
-}
-
-.loaderWrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 6rem;
+/* Charts Styles */
+.chartsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 1.5rem;
-  color: var(--orange);
+  margin-bottom: 2.5rem;
 }
 
-.loaderWrapper p {
-  color: var(--text-secondary);
+.chartCard {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
-.emptyState {
-  padding: 6rem;
-  text-align: center;
-  color: var(--text-secondary);
+.chartCard h3 {
   font-size: 1.1rem;
+  color: var(--foreground);
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.chartWrapper {
+  width: 100%;
+  min-height: 250px;
+}
+
+.tableContainer {
+  background: rgba(255, 255, 255, 0.01);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  overflow-x: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .requestsTable {
@@ -286,23 +305,27 @@
 .requestsTable th {
   padding: 1.25rem 1.5rem;
   background: rgba(255, 255, 255, 0.02);
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   font-weight: 600;
   color: var(--text-secondary);
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
 }
 
 .requestsTable td {
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid rgba(197, 168, 128, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
   font-size: 1rem;
+  transition: background 0.2s;
 }
 
 .requestsTable tr:last-child td {
   border-bottom: none;
 }
 
-.requestsTable tr:hover {
-  background: rgba(255, 255, 255, 0.01);
+.requestsTable tr:hover td {
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .clientName {

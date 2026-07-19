@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
-import { Loader2, Trash2, Plus, DollarSign, TrendingUp, TrendingDown } from 'lucide-react';
+import { Loader2, Trash2, Plus, TrendingUp, TrendingDown } from 'lucide-react';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import styles from '@/app/admin/Admin.module.css';
+
+const EXPENSE_COLORS = ['#ef4444', '#f97316', '#eab308', '#8b5cf6', '#64748b'];
 
 export default function AccountingTab() {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
   
-  // Also need manufacturing projects to link records
   const [projects, setProjects] = useState([]);
   
   const [formData, setFormData] = useState({ 
@@ -89,6 +91,14 @@ export default function AccountingTab() {
   const totalExpense = records.filter(r => r.type === 'Expense').reduce((sum, r) => sum + r.amount, 0);
   const netProfit = totalIncome - totalExpense;
 
+  // Chart Data
+  const expenses = records.filter(r => r.type === 'Expense');
+  const expenseCategories = ['Material Cost', 'Labor Cost', 'Overhead', 'Other'];
+  const expenseChartData = expenseCategories.map(cat => ({
+    name: cat,
+    value: expenses.filter(e => e.category === cat).reduce((sum, e) => sum + e.amount, 0)
+  })).filter(d => d.value > 0);
+
   return (
     <div className={styles.tabContentPanel}>
       <div className={styles.panelHeader}>
@@ -118,6 +128,27 @@ export default function AccountingTab() {
           </div>
         </div>
       </div>
+
+      {expenseChartData.length > 0 && (
+        <div className={styles.chartsGrid}>
+          <div className={styles.chartCard} style={{ gridColumn: '1 / -1' }}>
+            <h3>توزيع المصروفات</h3>
+            <div className={styles.chartWrapper}>
+              <ResponsiveContainer width="100%" height={250}>
+                <PieChart>
+                  <Pie data={expenseChartData} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
+                    {expenseChartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={EXPENSE_COLORS[index % EXPENSE_COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value) => `${value.toLocaleString()} EGP`} contentStyle={{ background: 'var(--surface)', border: '1px solid var(--border-color)', borderRadius: '8px' }} />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showAddForm && (
         <div className={styles.projectFormCard} style={{ marginBottom: '2rem' }}>
@@ -184,7 +215,7 @@ export default function AccountingTab() {
                   <td>{rec.relatedProject?.kitchenName || '-'}</td>
                   <td>
                     <span style={{ color: rec.type === 'Income' ? '#22c55e' : '#ef4444', fontWeight: 'bold' }}>
-                      {rec.type === 'Income' ? '+' : '-'}{rec.amount}
+                      {rec.type === 'Income' ? '+' : '-'}{rec.amount.toLocaleString()}
                     </span>
                   </td>
                   <td>
