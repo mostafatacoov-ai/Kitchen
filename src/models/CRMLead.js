@@ -1,5 +1,11 @@
 import mongoose from 'mongoose';
 
+const CommentSchema = new mongoose.Schema({
+  author: { type: String, required: true },
+  text: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now }
+});
+
 const CRMLeadSchema = new mongoose.Schema({
   clientName: { type: String, required: true },
   phone: { type: String, required: true },
@@ -9,16 +15,11 @@ const CRMLeadSchema = new mongoose.Schema({
     default: 'New' 
   },
   source: { type: String, default: 'Website' },
-  notes: { type: String },
   expectedValue: { type: Number, default: 0 },
+  notes: { type: String },
+  comments: [CommentSchema], // Added comments array for Sales tracking
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
-});
-
-// Update the updatedAt field before saving
-CRMLeadSchema.pre('save', function(next) {
-  this.updatedAt = new Date();
-  next();
 });
 
 export default mongoose.models.CRMLead || mongoose.model('CRMLead', CRMLeadSchema);

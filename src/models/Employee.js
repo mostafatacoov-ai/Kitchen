@@ -15,9 +15,4 @@ const EmployeeSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now }
 });
 
-EmployeeSchema.pre('save', function(next) {
-  this.updatedAt = new Date();
-  next();
-});
-
 export default mongoose.models.Employee || mongoose.model('Employee', EmployeeSchema);

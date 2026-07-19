@@ -1,23 +1,16 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import RequestModel from '@/models/Request';
-
-function verifyPasskey(request) {
-  const passkey = request.headers.get('x-admin-passkey');
-  const expectedPasskey = process.env.ADMIN_PASSKEY || '123456';
-  return passkey === expectedPasskey;
-}
+import { requireRole } from '@/lib/auth';
 
 export async function GET(request) {
-  if (!verifyPasskey(request)) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-  }
+  const auth = requireRole(request, ['Sales']); // Admin and Sales can view requests
+  if (auth.error) return NextResponse.json({ success: false, error: auth.error }, { status: auth.status });
 
   try {
     await dbConnect();
     const requestsDb = await RequestModel.find().sort({ createdAt: -1 }).lean();
     
-    // Map _id to id for frontend compatibility
     const requests = requestsDb.map(req => ({
       ...req,
       id: req._id.toString(),
@@ -32,25 +25,17 @@ export async function GET(request) {
 }
 
 export async function DELETE(request) {
-  if (!verifyPasskey(request)) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-  }
+  const auth = requireRole(request, []); // Only Admin can delete
+  if (auth.error) return NextResponse.json({ success: false, error: auth.error }, { status: auth.status });
 
   try {
     await dbConnect();
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 
-    if (!id) {
-      return NextResponse.json({ success: false, error: 'ID is required' }, { status: 400 });
-    }
+    if (!id) return NextResponse.json({ success: false, error: 'ID required' }, { status: 400 });
 
-    const deleted = await RequestModel.findByIdAndDelete(id);
-
-    if (!deleted) {
-      return NextResponse.json({ success: false, error: 'Request not found' }, { status: 404 });
-    }
-
+    await RequestModel.findByIdAndDelete(id);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Delete request error:', error);

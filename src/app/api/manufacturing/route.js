@@ -1,26 +1,23 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import ManufacturingProject from '@/models/ManufacturingProject';
-
-function verifyPasskey(request) {
-  const passkey = request.headers.get('x-admin-passkey');
-  const expectedPasskey = process.env.ADMIN_PASSKEY || '123456';
-  return passkey === expectedPasskey;
-}
+import FinancialRecord from '@/models/FinancialRecord';
+import { requireRole } from '@/lib/auth';
 
 export async function GET(request) {
-  if (!verifyPasskey(request)) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-  }
+  const auth = requireRole(request, ['AccountManager', 'Sales']); // Admin is always allowed implicitly
+  if (auth.error) return NextResponse.json({ success: false, error: auth.error }, { status: auth.status });
 
   try {
     await dbConnect();
-    // Populate the assignedPersonnel to get employee details
-    const projectsDb = await ManufacturingProject.find().populate('assignedPersonnel').sort({ createdAt: -1 }).lean();
+    const projectsDb = await ManufacturingProject.find()
+      .populate('linkedProject', 'title')
+      .sort({ createdAt: -1 })
+      .lean();
     
-    const projects = projectsDb.map(proj => ({
-      ...proj,
-      id: proj._id.toString(),
+    const projects = projectsDb.map(p => ({
+      ...p,
+      id: p._id.toString(),
       _id: undefined
     }));
 
@@ -32,43 +29,59 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-  if (!verifyPasskey(request)) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-  }
+  const auth = requireRole(request, ['AccountManager']);
+  if (auth.error) return NextResponse.json({ success: false, error: auth.error }, { status: auth.status });
 
   try {
     await dbConnect();
     const data = await request.json();
+
+    if (!data.stagesData || data.stagesData.length === 0) {
+      const defaultStages = [
+        'Measurement', 'Design', 'Contract', 'Cutting', 'Assembling', 'Finishing', 'Delivery', 'Installation'
+      ];
+      data.stagesData = defaultStages.map(name => ({ name }));
+    }
+
     const newProject = await ManufacturingProject.create(data);
     
-    // We fetch it again to populate the assignedPersonnel just in case
-    const populated = await ManufacturingProject.findById(newProject._id).populate('assignedPersonnel').lean();
-
     return NextResponse.json({ 
       success: true, 
-      project: { ...populated, id: populated._id.toString(), _id: undefined } 
+      project: { ...newProject.toObject(), id: newProject._id.toString(), _id: undefined } 
     });
   } catch (error) {
     console.error('Create manufacturing project error:', error);
-    return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Server error: ' + error.message }, { status: 500 });
   }
 }
 
 export async function PUT(request) {
-  if (!verifyPasskey(request)) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-  }
+  const auth = requireRole(request, ['AccountManager']);
+  if (auth.error) return NextResponse.json({ success: false, error: auth.error }, { status: auth.status });
 
   try {
     await dbConnect();
     const data = await request.json();
-    const { id, ...updateData } = data;
+    const { id, newExpense, ...updateData } = data;
 
     if (!id) return NextResponse.json({ success: false, error: 'ID required' }, { status: 400 });
 
-    const updatedProject = await ManufacturingProject.findByIdAndUpdate(id, updateData, { new: true }).populate('assignedPersonnel').lean();
+    const updatedProject = await ManufacturingProject.findByIdAndUpdate(id, updateData, { new: true })
+      .populate('linkedProject', 'title')
+      .lean();
     
     if (!updatedProject) return NextResponse.json({ success: false, error: 'Not found' }, { status: 404 });
+
+    if (newExpense && newExpense.amount > 0) {
+      await FinancialRecord.create({
+        type: 'Expense',
+        category: 'Material Cost',
+        amount: newExpense.amount,
+        date: new Date(),
+        description: newExpense.description || `Cost for Manufacturing Project: ${updatedProject.kitchenName}`,
+        relatedProject: id
+      });
+    }
 
     return NextResponse.json({ 
       success: true, 
@@ -81,9 +94,8 @@ export async function PUT(request) {
 }
 
 export async function DELETE(request) {
-  if (!verifyPasskey(request)) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-  }
+  const auth = requireRole(request, []); // Admin only
+  if (auth.error) return NextResponse.json({ success: false, error: auth.error }, { status: auth.status });
 
   try {
     await dbConnect();

@@ -1,39 +1,11 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import Employee from '@/models/Employee';
-
-function verifyPasskey(request) {
-  const passkey = request.headers.get('x-admin-passkey');
-  const expectedPasskey = process.env.ADMIN_PASSKEY || '123456';
-  return passkey === expectedPasskey;
-}
-
-export async function GET(request) {
-  if (!verifyPasskey(request)) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-  }
-
-  try {
-    await dbConnect();
-    const employeesDb = await Employee.find().sort({ createdAt: -1 }).lean();
-    
-    const employees = employeesDb.map(emp => ({
-      ...emp,
-      id: emp._id.toString(),
-      _id: undefined
-    }));
-
-    return NextResponse.json({ success: true, employees });
-  } catch (error) {
-    console.error('Fetch employees error:', error);
-    return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
-  }
-}
+import { requireRole } from '@/lib/auth';
 
 export async function POST(request) {
-  if (!verifyPasskey(request)) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-  }
+  const auth = requireRole(request, []); // Only Admin
+  if (auth.error) return NextResponse.json({ success: false, error: auth.error }, { status: auth.status });
 
   try {
     await dbConnect();
@@ -50,15 +22,34 @@ export async function POST(request) {
   }
 }
 
-export async function PUT(request) {
-  if (!verifyPasskey(request)) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-  }
+export async function GET(request) {
+  const auth = requireRole(request, []); // Only Admin can view HR
+  if (auth.error) return NextResponse.json({ success: false, error: auth.error }, { status: auth.status });
 
   try {
     await dbConnect();
-    const data = await request.json();
-    const { id, ...updateData } = data;
+    const employeesDb = await Employee.find().sort({ createdAt: -1 }).lean();
+    
+    const employees = employeesDb.map(e => ({
+      ...e,
+      id: e._id.toString(),
+      _id: undefined
+    }));
+
+    return NextResponse.json({ success: true, employees });
+  } catch (error) {
+    console.error('Fetch employees error:', error);
+    return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
+  }
+}
+
+export async function PUT(request) {
+  const auth = requireRole(request, []); // Only Admin
+  if (auth.error) return NextResponse.json({ success: false, error: auth.error }, { status: auth.status });
+
+  try {
+    await dbConnect();
+    const { id, ...updateData } = await request.json();
 
     if (!id) return NextResponse.json({ success: false, error: 'ID required' }, { status: 400 });
 
@@ -77,9 +68,8 @@ export async function PUT(request) {
 }
 
 export async function DELETE(request) {
-  if (!verifyPasskey(request)) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-  }
+  const auth = requireRole(request, []); // Only Admin
+  if (auth.error) return NextResponse.json({ success: false, error: auth.error }, { status: auth.status });
 
   try {
     await dbConnect();

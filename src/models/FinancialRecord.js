@@ -19,9 +19,4 @@ const FinancialRecordSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now }
 });
 
-FinancialRecordSchema.pre('save', function(next) {
-  this.updatedAt = new Date();
-  next();
-});
-
 export default mongoose.models.FinancialRecord || mongoose.model('FinancialRecord', FinancialRecordSchema);
