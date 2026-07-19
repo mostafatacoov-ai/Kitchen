@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import dbConnect from '@/lib/db';
+import ProjectModel from '@/models/Project';
 
 function verifyPasskey(request) {
   const passkey = request.headers.get('x-admin-passkey');
@@ -8,41 +10,18 @@ function verifyPasskey(request) {
   return passkey === expectedPasskey;
 }
 
-function getFilePath() {
-  return path.join(process.cwd(), 'src/data/projects.json');
-}
-
-function readProjects() {
-  try {
-    const filePath = getFilePath();
-    if (fs.existsSync(filePath)) {
-      const fileData = fs.readFileSync(filePath, 'utf8');
-      try {
-        return JSON.parse(fileData || '[]');
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  } catch {
-    return [];
-  }
-}
-
-function writeProjects(projects) {
-  try {
-    const filePath = getFilePath();
-    fs.writeFileSync(filePath, JSON.stringify(projects, null, 2), 'utf8');
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 export async function GET(request) {
   try {
-    const projects = readProjects();
-    projects.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    await dbConnect();
+    const projectsDb = await ProjectModel.find().sort({ createdAt: -1 }).lean();
+    
+    // Map _id to id for frontend compatibility
+    const projects = projectsDb.map(proj => ({
+      ...proj,
+      id: proj._id.toString(),
+      _id: undefined
+    }));
+
     return NextResponse.json({ success: true, projects });
   } catch (error) {
     console.error('Fetch projects error:', error);
@@ -56,6 +35,7 @@ export async function POST(request) {
   }
 
   try {
+    await dbConnect();
     const formData = await request.formData();
     const titleEn = formData.get('titleEn');
     const titleAr = formData.get('titleAr');
@@ -96,26 +76,29 @@ export async function POST(request) {
       }
     }
 
-    const newProject = {
-      id: projectId,
+    const newProject = await ProjectModel.create({
       title: {
         en: titleEn,
         ar: titleAr
       },
-      description: {
+      desc: {
         en: descEn || '',
         ar: descAr || ''
       },
       category: category,
       images: imageUrls,
-      createdAt: new Date().toISOString()
+    });
+
+    const projectObject = {
+      id: newProject._id.toString(),
+      title: newProject.title,
+      description: newProject.desc, // Frontend might expect description instead of desc based on old logic, but let's stick to what we had
+      category: newProject.category,
+      images: newProject.images,
+      createdAt: newProject.createdAt.toISOString()
     };
 
-    const projects = readProjects();
-    projects.push(newProject);
-    writeProjects(projects);
-
-    return NextResponse.json({ success: true, project: newProject });
+    return NextResponse.json({ success: true, project: projectObject });
 
   } catch (error) {
     console.error('Create project error:', error);

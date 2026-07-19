@@ -1,22 +1,30 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { Loader2, Trash2, Calendar, Phone, MapPin, Sparkles, Key, LogOut, Upload, Image as ImageIcon } from 'lucide-react';
+import { Loader2, Key, LogOut, LayoutDashboard, Briefcase, Users, Wrench, DollarSign, MessageSquare } from 'lucide-react';
 import styles from './Admin.module.css';
+
+// Import Components
+import RequestsTab from '@/components/admin/RequestsTab';
+import ProjectsTab from '@/components/admin/ProjectsTab';
+import CRMTab from '@/components/admin/CRMTab';
+import ManufacturingTab from '@/components/admin/ManufacturingTab';
+import HRTab from '@/components/admin/HRTab';
+import AccountingTab from '@/components/admin/AccountingTab';
 
 export default function AdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [passkey, setPasskey] = useState('');
   const [loginError, setLoginError] = useState('');
   
-  const [activeTab, setActiveTab] = useState('requests'); // 'requests' or 'projects'
+  const [activeTab, setActiveTab] = useState('requests');
   
   const [requests, setRequests] = useState([]);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
+  
+  // Projects Tab State
   const [uploading, setUploading] = useState(false);
-
-  // New Project Form State
   const [newProject, setNewProject] = useState({
     titleEn: '', titleAr: '', descEn: '', descAr: '', category: 'Modern'
   });
@@ -135,7 +143,6 @@ export default function AdminPage() {
     formData.append('descEn', newProject.descEn);
     formData.append('descAr', newProject.descAr);
     
-    // Check if custom category is selected
     if (newProject.category === 'custom') {
       if (!newProject.customCategory) {
         alert('الرجاء كتابة التصنيف / Please type the custom category');
@@ -201,273 +208,91 @@ export default function AdminPage() {
     );
   }
 
-  const stats = {
-    total: requests.length,
-    modern: requests.filter(r => r.style === 'modern').length,
-    classic: requests.filter(r => r.style === 'classic').length,
-    neoClassic: requests.filter(r => r.style === 'neo-classic').length,
-  };
+  const navItems = [
+    { id: 'requests', label: 'الطلبات الواردة', icon: MessageSquare },
+    { id: 'crm', label: 'إدارة العملاء (CRM)', icon: Users },
+    { id: 'projects', label: 'معرض المشاريع', icon: Briefcase },
+    { id: 'manufacturing', label: 'إدارة التصنيع', icon: Wrench },
+    { id: 'hr', label: 'شؤون الموظفين (HR)', icon: LayoutDashboard },
+    { id: 'accounting', label: 'الحسابات والتكاليف', icon: DollarSign },
+  ];
 
   return (
-    <div className={styles.adminDashboard}>
-      <header className={styles.dashboardHeader}>
-        <div>
-          <h1>لوحة التحكم</h1>
-          <p>إدارة الطلبات والمشاريع</p>
+    <div className={styles.dashboardLayout}>
+      {/* Sidebar */}
+      <aside className={styles.sidebar}>
+        <div className={styles.sidebarHeader}>
+          <h1>The Kitchen</h1>
+          <p>نظام الإدارة المتكامل</p>
         </div>
-        <button onClick={handleLogout} className={styles.logoutBtn}>
-          <LogOut size={18} />
-          <span>خروج / Logout</span>
-        </button>
-      </header>
+        
+        <nav className={styles.sidebarNav}>
+          {navItems.map(item => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.id}
+                className={`${styles.navItem} ${activeTab === item.id ? styles.activeNavItem : ''}`}
+                onClick={() => setActiveTab(item.id)}
+              >
+                <Icon size={20} />
+                <span>{item.label}</span>
+              </button>
+            )
+          })}
+        </nav>
 
-      <div className={styles.tabsContainer}>
-        <button 
-          className={`${styles.tabBtn} ${activeTab === 'requests' ? styles.activeTab : ''}`}
-          onClick={() => setActiveTab('requests')}
-        >
-          الطلبات / Requests
-        </button>
-        <button 
-          className={`${styles.tabBtn} ${activeTab === 'projects' ? styles.activeTab : ''}`}
-          onClick={() => setActiveTab('projects')}
-        >
-          المشاريع / Projects
-        </button>
-      </div>
-
-      {activeTab === 'requests' && (
-        <>
-          <div className={styles.statsGrid}>
-            <div className={styles.statCard}>
-              <h3>إجمالي الطلبات</h3>
-              <div className={styles.statNumber}>{stats.total}</div>
-            </div>
-            <div className={styles.statCard}>
-              <h3>مطابخ مودرن</h3>
-              <div className={styles.statNumber} style={{ color: 'var(--orange)' }}>{stats.modern}</div>
-            </div>
-            <div className={styles.statCard}>
-              <h3>مطابخ كلاسيك</h3>
-              <div className={styles.statNumber} style={{ color: 'var(--gold)' }}>{stats.classic}</div>
-            </div>
-            <div className={styles.statCard}>
-              <h3>نيو كلاسيك</h3>
-              <div className={styles.statNumber} style={{ color: '#5b89ba' }}>{stats.neoClassic}</div>
-            </div>
-          </div>
-
-          <div className={styles.tableContainer}>
-            {loading ? (
-              <div className={styles.loaderWrapper}>
-                <Loader2 className="animate-spin" size={40} />
-                <p>جاري تحميل البيانات...</p>
-              </div>
-            ) : requests.length === 0 ? (
-              <div className={styles.emptyState}>
-                <p>لا توجد طلبات تصميم حتى الآن.</p>
-              </div>
-            ) : (
-              <table className={styles.requestsTable}>
-                <thead>
-                  <tr>
-                    <th>الاسم الكامل / Name</th>
-                    <th>الهاتف / Phone</th>
-                    <th>المساحة / Area</th>
-                    <th>الستايل / Style</th>
-                    <th>تاريخ الطلب / Date</th>
-                    <th>إجراءات / Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {requests.map((req) => (
-                    <tr key={req.id}>
-                      <td className={styles.clientName}>{req.name}</td>
-                      <td>
-                        <div className={styles.phoneGroup}>
-                          <span dir="ltr">{req.phone}</span>
-                          <a href={`tel:${req.phone}`} className={styles.actionIcon} title="اتصال هاتفي">
-                            <Phone size={16} />
-                          </a>
-                          <a 
-                            href={`https://wa.me/${req.phone.replace(/[\s\+]/g, '')}`} 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
-                            className={styles.actionIcon} 
-                            style={{ color: '#25D366' }}
-                          >
-                            WS
-                          </a>
-                        </div>
-                      </td>
-                      <td>
-                        <div className={styles.iconCell}>
-                          <MapPin size={16} style={{ color: 'var(--text-secondary)' }} />
-                          <span>{req.area}</span>
-                        </div>
-                      </td>
-                      <td>
-                        <div className={styles.iconCell}>
-                          <Sparkles size={16} style={{ color: 'var(--gold)' }} />
-                          <span className={styles.styleBadge}>
-                            {req.style === 'modern' ? 'مودرن' : req.style === 'classic' ? 'كلاسيك' : req.style === 'neo-classic' ? 'نيو كلاسيك' : req.style}
-                          </span>
-                        </div>
-                      </td>
-                      <td>
-                        <div className={styles.iconCell}>
-                          <Calendar size={16} style={{ color: 'var(--text-secondary)' }} />
-                          <span>{new Date(req.createdAt).toLocaleDateString('ar-EG', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-                        </div>
-                      </td>
-                      <td>
-                        <button
-                          onClick={() => handleDeleteRequest(req.id)}
-                          className={styles.deleteBtn}
-                          disabled={deletingId === req.id}
-                        >
-                          {deletingId === req.id ? (
-                            <Loader2 className="animate-spin" size={16} />
-                          ) : (
-                            <Trash2 size={16} />
-                          )}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-        </>
-      )}
-
-      {activeTab === 'projects' && (
-        <div className={styles.projectsManager}>
-          <div className={styles.projectFormCard}>
-            <h2>إضافة مشروع جديد / Add New Project</h2>
-            <form onSubmit={handleProjectSubmit} className={styles.formGrid}>
-              
-              <div className={styles.formGroup}>
-                <label>اسم المشروع (عربي)</label>
-                <input 
-                  type="text" 
-                  className={styles.formInput} 
-                  required
-                  value={newProject.titleAr}
-                  onChange={e => setNewProject({...newProject, titleAr: e.target.value})}
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>Project Name (English)</label>
-                <input 
-                  type="text" 
-                  className={styles.formInput} 
-                  required
-                  value={newProject.titleEn}
-                  onChange={e => setNewProject({...newProject, titleEn: e.target.value})}
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>التصنيف / Category</label>
-                <select 
-                  className={styles.formInput}
-                  value={newProject.category}
-                  onChange={e => setNewProject({...newProject, category: e.target.value})}
-                >
-                  <option value="Modern">Modern / مودرن</option>
-                  <option value="Classic">Classic / كلاسيك</option>
-                  <option value="Semi-Classic">Semi-Classic / نيو كلاسيك</option>
-                  <option value="custom">إضافة تصنيف جديد / Add Custom</option>
-                </select>
-              </div>
-
-              {newProject.category === 'custom' && (
-                <div className={styles.formGroup}>
-                  <label>التصنيف الجديد / Custom Category</label>
-                  <input 
-                    type="text" 
-                    className={styles.formInput} 
-                    placeholder="e.g. Minimalist"
-                    value={newProject.customCategory || ''}
-                    onChange={e => setNewProject({...newProject, customCategory: e.target.value})}
-                  />
-                </div>
-              )}
-
-              <div className={styles.formGroup}>
-                <label>الوصف (عربي)</label>
-                <textarea 
-                  className={styles.formInput}
-                  value={newProject.descAr}
-                  onChange={e => setNewProject({...newProject, descAr: e.target.value})}
-                ></textarea>
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>Description (English)</label>
-                <textarea 
-                  className={styles.formInput}
-                  value={newProject.descEn}
-                  onChange={e => setNewProject({...newProject, descEn: e.target.value})}
-                ></textarea>
-              </div>
-
-              <div className={`${styles.formGroup} ${styles.fullWidth}`}>
-                <label>صور المشروع / Project Images</label>
-                <input 
-                  type="file" 
-                  multiple 
-                  accept="image/*"
-                  className={styles.formInput}
-                  onChange={e => setImages(e.target.files)}
-                  required
-                />
-                <small style={{ color: 'var(--text-secondary)' }}>
-                  يمكنك تحديد عدة صور مرة واحدة. الصورة الأولى ستكون الغلاف.
-                </small>
-              </div>
-
-              <div className={`${styles.formGroup} ${styles.fullWidth}`}>
-                <button type="submit" className={styles.submitBtn} disabled={uploading}>
-                  {uploading ? <Loader2 className="animate-spin" size={24} /> : <Upload size={20} />}
-                  <span>{uploading ? 'جاري الرفع...' : 'رفع المشروع / Upload Project'}</span>
-                </button>
-              </div>
-            </form>
-          </div>
-
-          <div className={styles.projectList}>
-            {projects.map(project => (
-              <div key={project.id} className={styles.projectCard}>
-                <img src={project.images[0]} alt={project.title.en} className={styles.projectImage} />
-                <button 
-                  className={styles.deleteProjectBtn}
-                  onClick={() => handleDeleteProject(project.id)}
-                  disabled={deletingId === project.id}
-                >
-                  {deletingId === project.id ? <Loader2 className="animate-spin" size={16} /> : <Trash2 size={16} />}
-                </button>
-                <div className={styles.projectInfo}>
-                  <span className={styles.projectCategory}>{project.category}</span>
-                  <h3>{project.title.ar} / {project.title.en}</h3>
-                  <div style={{ display: 'flex', gap: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem', alignItems: 'center' }}>
-                    <ImageIcon size={14} />
-                    <span>{project.images.length} صور / Photos</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-            {projects.length === 0 && (
-              <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)' }}>
-                لا توجد مشاريع مضافة بعد / No projects added yet
-              </div>
-            )}
-          </div>
+        <div className={styles.sidebarFooter}>
+          <button onClick={handleLogout} className={styles.logoutBtn}>
+            <LogOut size={18} />
+            <span>تسجيل الخروج</span>
+          </button>
         </div>
-      )}
+      </aside>
+
+      {/* Main Content Area */}
+      <main className={styles.mainContent}>
+        {activeTab === 'requests' && (
+          <div className={styles.tabContentPanel}>
+            <div className={styles.panelHeader}>
+              <h2>الطلبات الواردة من الموقع</h2>
+            </div>
+            <RequestsTab 
+              requests={requests} 
+              loading={loading} 
+              deletingId={deletingId} 
+              handleDeleteRequest={handleDeleteRequest} 
+            />
+          </div>
+        )}
+
+        {activeTab === 'crm' && <CRMTab />}
+
+        {activeTab === 'projects' && (
+          <div className={styles.tabContentPanel}>
+            <div className={styles.panelHeader}>
+              <h2>معرض المشاريع</h2>
+            </div>
+            <ProjectsTab 
+              projects={projects}
+              handleDeleteProject={handleDeleteProject}
+              deletingId={deletingId}
+              handleProjectSubmit={handleProjectSubmit}
+              newProject={newProject}
+              setNewProject={setNewProject}
+              setImages={setImages}
+              uploading={uploading}
+            />
+          </div>
+        )}
+
+        {activeTab === 'manufacturing' && <ManufacturingTab />}
+        
+        {activeTab === 'hr' && <HRTab />}
+        
+        {activeTab === 'accounting' && <AccountingTab />}
+
+      </main>
     </div>
   );
 }

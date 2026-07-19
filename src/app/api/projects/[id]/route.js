@@ -1,15 +1,13 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import dbConnect from '@/lib/db';
+import ProjectModel from '@/models/Project';
 
 function verifyPasskey(request) {
   const passkey = request.headers.get('x-admin-passkey');
   const expectedPasskey = process.env.ADMIN_PASSKEY || '123456';
   return passkey === expectedPasskey;
-}
-
-function getFilePath() {
-  return path.join(process.cwd(), 'src/data/projects.json');
 }
 
 export async function DELETE(request, context) {
@@ -26,20 +24,12 @@ export async function DELETE(request, context) {
       return NextResponse.json({ success: false, error: 'ID is required' }, { status: 400 });
     }
 
-    const filePath = getFilePath();
-    let projects = [];
-    if (fs.existsSync(filePath)) {
-      projects = JSON.parse(fs.readFileSync(filePath, 'utf8') || '[]');
-    }
+    await dbConnect();
+    const deleted = await ProjectModel.findByIdAndDelete(id);
 
-    const initialLength = projects.length;
-    projects = projects.filter(p => p.id !== id);
-
-    if (projects.length === initialLength) {
+    if (!deleted) {
       return NextResponse.json({ success: false, error: 'Project not found' }, { status: 404 });
     }
-
-    fs.writeFileSync(filePath, JSON.stringify(projects, null, 2), 'utf8');
 
     // Also delete the uploaded files
     const uploadDir = path.join(process.cwd(), 'public/uploads/projects', id);

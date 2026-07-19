@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
+import dbConnect from '@/lib/db';
+import RequestModel from '@/models/Request';
 
 export async function POST(request) {
   try {
+    await dbConnect();
     const data = await request.json();
     const { name, phone, area, style } = data;
 
@@ -9,36 +12,12 @@ export async function POST(request) {
       return NextResponse.json({ success: false, error: 'Name and phone are required' }, { status: 400 });
     }
 
-    const newRequest = {
-      id: Date.now().toString(),
+    const newRequest = await RequestModel.create({
       name,
       phone,
       area: area || 'N/A',
       style: style || 'N/A',
-      createdAt: new Date().toISOString(),
-    };
-
-    // Try to save to requests.json — may fail in read-only hosting environments (Hostinger, Vercel)
-    // This is non-critical: WhatsApp notification still fires even if file write fails
-    try {
-      const fs = await import('fs');
-      const path = await import('path');
-      const filePath = path.join(process.cwd(), 'src/data/requests.json');
-      let requests = [];
-      if (fs.existsSync(filePath)) {
-        const fileData = fs.readFileSync(filePath, 'utf8');
-        try {
-          requests = JSON.parse(fileData || '[]');
-        } catch {
-          requests = [];
-        }
-      }
-      requests.push(newRequest);
-      fs.writeFileSync(filePath, JSON.stringify(requests, null, 2), 'utf8');
-    } catch (fsError) {
-      // File system write not available in this environment — skip silently
-      console.warn('File system write skipped (read-only environment):', fsError.message);
-    }
+    });
 
     // Trigger WhatsApp notification if configured
     const whatsappPhone = process.env.WHATSAPP_PHONE;
@@ -57,7 +36,17 @@ export async function POST(request) {
       }
     }
 
-    return NextResponse.json({ success: true, request: newRequest });
+    // Convert to plain object to match old response shape slightly
+    const requestObject = {
+      id: newRequest._id.toString(),
+      name: newRequest.name,
+      phone: newRequest.phone,
+      area: newRequest.area,
+      style: newRequest.style,
+      createdAt: newRequest.createdAt.toISOString()
+    };
+
+    return NextResponse.json({ success: true, request: requestObject });
 
   } catch (error) {
     console.error('Contact submission error:', error);
