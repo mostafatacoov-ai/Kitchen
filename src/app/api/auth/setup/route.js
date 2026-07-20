@@ -32,6 +32,6 @@ export async function POST(request) {
 
   } catch (error) {
     console.error('Setup error:', error);
-    return NextResponse.json({ success: false, error: 'حدث خطأ في الخادم' }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message || 'حدث خطأ في الخادم' }, { status: 500 });
   }
 }
