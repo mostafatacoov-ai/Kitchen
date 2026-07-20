@@ -4,6 +4,7 @@ import RequestModel from '@/models/Request';
 import { requireRole } from '@/lib/auth';
 
 export async function GET(request) {
+  console.log("HIT GET /api/requests");
   const auth = requireRole(request, ['Sales']); // Admin and Sales can view requests
   if (auth.error) return NextResponse.json({ success: false, error: auth.error }, { status: auth.status });
 

@@ -395,20 +395,69 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
-  .adminDashboard {
-    padding: 2rem 1rem;
-    gap: 1.5rem;
-  }
-  .dashboardHeader {
+@media (max-width: 900px) {
+  .dashboardLayout {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-    width: 100%;
   }
-  .logoutBtn {
-    align-self: stretch;
-    justify-content: center;
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    padding: 1rem;
+    border-left: none;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: none;
+  }
+  .sidebarHeader {
+    padding: 0 0 1rem 0;
+    margin-bottom: 1rem;
+  }
+  .sidebarNav {
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 0 0 0.5rem 0;
+    white-space: nowrap;
+    gap: 0.5rem;
+    -webkit-overflow-scrolling: touch;
+  }
+  .sidebarNav::-webkit-scrollbar {
+    height: 4px;
+  }
+  .sidebarNav::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+  }
+  .navItem {
+    width: auto;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+  .activeNavItem {
+    box-shadow: 0 4px 0 -1px var(--orange); /* Bottom border instead of side */
+  }
+  .sidebarFooter {
+    padding: 1rem 0 0 0;
+    margin-top: 0.5rem;
+  }
+  .mainContent {
+    padding: 1.5rem 1rem;
+  }
+  .panelHeader h2 {
+    font-size: 1.5rem;
+  }
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+  .tabsContainer {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .tabBtn {
+    flex: 1 1 45%;
+    text-align: center;
+    padding: 0.5rem;
+    font-size: 0.95rem;
   }
 }
 
@@ -600,7 +649,7 @@ textarea.formInput {
   transform: scale(1.1);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .formGrid {
     grid-template-columns: 1fr;
   }

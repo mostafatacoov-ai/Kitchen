@@ -10,6 +10,7 @@ import CRMTab from '@/components/admin/CRMTab';
 import ManufacturingTab from '@/components/admin/ManufacturingTab';
 import HRTab from '@/components/admin/HRTab';
 import AccountingTab from '@/components/admin/AccountingTab';
+import PurchasingTab from '@/components/admin/PurchasingTab';
 
 export default function AdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -57,19 +58,27 @@ export default function AdminPage() {
     if (role === 'Admin' || role === 'Sales') setActiveTab('requests');
     else if (role === 'Accounting') setActiveTab('accounting');
     else if (role === 'AccountManager') setActiveTab('projects');
+    else if (role === 'Purchasing') setActiveTab('purchasing');
   };
 
   const fetchRequests = async () => {
     try {
+      console.log('Fetching /api/requests');
       const res = await fetch('/api/requests', { headers: { 'x-auth-token': token } });
+      if (!res.ok) {
+        const text = await res.text();
+        console.error('Fetch requests failed with status', res.status, text.substring(0, 100));
+        return;
+      }
       const data = await res.json();
       if (data.success) setRequests(data.requests);
-    } catch (err) { console.error(err); }
+    } catch (err) { console.error('Error fetching requests:', err); }
   };
 
   const fetchProjects = async () => {
     try {
       const res = await fetch('/api/projects');
+      if (!res.ok) return console.error('Fetch projects failed', res.status);
       const data = await res.json();
       if (data.success) setProjects(data.data);
     } catch (err) { console.error(err); }
@@ -174,7 +183,8 @@ export default function AdminPage() {
     { id: 'requests', label: 'الطلبات الواردة', icon: MessageSquare, roles: ['Admin', 'Sales'] },
     { id: 'crm', label: 'إدارة العملاء (CRM)', icon: Users, roles: ['Admin', 'Sales'] },
     { id: 'projects', label: 'معرض المشاريع', icon: Briefcase, roles: ['Admin', 'AccountManager'] },
-    { id: 'manufacturing', label: 'إدارة التصنيع', icon: Wrench, roles: ['Admin', 'AccountManager', 'Sales'] },
+    { id: 'manufacturing', label: 'إدارة التصنيع', icon: Wrench, roles: ['Admin', 'AccountManager', 'Sales', 'Purchasing'] },
+    { id: 'purchasing', label: 'المشتريات', icon: DollarSign, roles: ['Admin', 'Purchasing', 'AccountManager'] },
     { id: 'hr', label: 'شؤون الموظفين (HR)', icon: LayoutDashboard, roles: ['Admin'] },
     { id: 'accounting', label: 'الحسابات والتكاليف', icon: DollarSign, roles: ['Admin', 'Accounting'] },
   ];
@@ -255,6 +265,7 @@ export default function AdminPage() {
         )}
 
         {activeTab === 'manufacturing' && <ManufacturingTab userRole={user.role} token={token} />}
+        {activeTab === 'purchasing' && <PurchasingTab userRole={user.role} token={token} />}
         {activeTab === 'hr' && <HRTab userRole={user.role} token={token} />}
         {activeTab === 'accounting' && <AccountingTab userRole={user.role} token={token} />}
       </main>

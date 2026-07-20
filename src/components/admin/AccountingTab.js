@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Loader2, Trash2, Plus, TrendingUp, TrendingDown } from 'lucide-react';
+import { Loader2, Trash2, Plus, TrendingUp, TrendingDown, CheckCircle } from 'lucide-react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import styles from '@/app/admin/Admin.module.css';
 
@@ -7,6 +7,7 @@ const EXPENSE_COLORS = ['#ef4444', '#f97316', '#eab308', '#8b5cf6', '#64748b'];
 
 export default function AccountingTab() {
   const [records, setRecords] = useState([]);
+  const [pendingLeads, setPendingLeads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
   
@@ -25,7 +26,22 @@ export default function AccountingTab() {
   useEffect(() => {
     fetchRecords();
     fetchProjects();
+    fetchPendingLeads();
   }, []);
+
+  const fetchPendingLeads = async () => {
+    try {
+      const key = localStorage.getItem('admin_passkey');
+      const res = await fetch('/api/crm', { headers: { 'x-admin-passkey': key } });
+      const data = await res.json();
+      if (data.success) {
+        const pending = data.leads.filter(l => l.contractSigned && !l.downPaymentConfirmed);
+        setPendingLeads(pending);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const fetchRecords = async () => {
     try {
@@ -86,6 +102,55 @@ export default function AccountingTab() {
     }
   };
 
+  const confirmDownPayment = async (lead) => {
+    const amount = prompt(`أدخل قيمة الدفعة المقدمة للعميل ${lead.clientName} (EGP):`);
+    if (!amount || isNaN(amount)) return;
+
+    const key = localStorage.getItem('admin_passkey');
+    
+    try {
+      // 1. Log Income
+      await fetch('/api/accounting', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-admin-passkey': key },
+        body: JSON.stringify({
+          type: 'Income',
+          category: 'Project Revenue',
+          amount: Number(amount),
+          description: `دفعة مقدمة - ${lead.clientName}`
+        })
+      });
+
+      // 2. Update Lead
+      await fetch('/api/crm', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'x-admin-passkey': key },
+        body: JSON.stringify({
+          id: lead.id,
+          downPaymentConfirmed: true
+        })
+      });
+
+      // 3. Auto-Create Job Order
+      await fetch('/api/manufacturing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-auth-token': key },
+        body: JSON.stringify({
+          kitchenName: `مطبخ ${lead.clientName}`,
+          clientName: lead.clientName,
+          phone: lead.phone,
+          woodenBulks: [],
+          accessories: { hinges: [], drawerRunners: [], skirting: false }
+        })
+      });
+
+      fetchRecords();
+      fetchPendingLeads();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   // Calculate totals
   const totalIncome = records.filter(r => r.type === 'Income').reduce((sum, r) => sum + r.amount, 0);
   const totalExpense = records.filter(r => r.type === 'Expense').reduce((sum, r) => sum + r.amount, 0);
@@ -107,6 +172,40 @@ export default function AccountingTab() {
           <Plus size={18} /> إضافة حركة مالية
         </button>
       </div>
+
+      {pendingLeads.length > 0 && (
+        <div className={styles.tableContainer} style={{ marginBottom: '2rem', border: '2px solid var(--orange)' }}>
+          <h3 style={{ padding: '1rem', color: 'var(--orange)' }}>دفعات مقدمة معلقة (انتظار التأكيد)</h3>
+          <table className={styles.requestsTable}>
+            <thead>
+              <tr>
+                <th>العميل / Client</th>
+                <th>الهاتف / Phone</th>
+                <th>القيمة المتوقعة / Value</th>
+                <th>الإجراء / Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pendingLeads.map(lead => (
+                <tr key={lead.id}>
+                  <td className={styles.clientName}>{lead.clientName}</td>
+                  <td><span dir="ltr">{lead.phone}</span></td>
+                  <td>{lead.expectedValue?.toLocaleString()} EGP</td>
+                  <td>
+                    <button 
+                      onClick={() => confirmDownPayment(lead)}
+                      className={styles.submitBtn} 
+                      style={{ padding: '0.2rem 0.5rem', width: 'auto', marginTop: 0 }}
+                    >
+                      <CheckCircle size={14} style={{ marginRight: '0.2rem' }} /> تأكيد الاستلام
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       <div className={styles.statsGrid} style={{ marginBottom: '2rem' }}>
         <div className={styles.statCard}>

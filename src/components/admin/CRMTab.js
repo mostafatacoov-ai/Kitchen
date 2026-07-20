@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Loader2, Trash2, Phone, Save, Edit, Plus, Users, TrendingUp } from 'lucide-react';
+import { Loader2, Trash2, Phone, Save, Edit, Plus, Users, TrendingUp, FileText } from 'lucide-react';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import styles from '@/app/admin/Admin.module.css';
 
@@ -197,6 +197,7 @@ export default function CRMTab() {
                 <th>الحالة / Status</th>
                 <th>المصدر / Source</th>
                 <th>القيمة / Value</th>
+                <th>التعاقد / Contract</th>
                 <th>الإجراءات / Actions</th>
               </tr>
             </thead>
@@ -204,7 +205,7 @@ export default function CRMTab() {
               {leads.map(lead => (
                 <tr key={lead.id}>
                   {editingId === lead.id ? (
-                    <td colSpan="6" style={{ padding: '1rem' }}>
+                    <td colSpan="7" style={{ padding: '1rem' }}>
                       <div className={styles.formGrid}>
                          <input type="text" className={styles.formInput} defaultValue={lead.clientName} id={`name-${lead.id}`} />
                          <input type="text" className={styles.formInput} defaultValue={lead.phone} id={`phone-${lead.id}`} />
@@ -239,6 +240,19 @@ export default function CRMTab() {
                       </td>
                       <td>{lead.source}</td>
                       <td>{lead.expectedValue?.toLocaleString()} EGP</td>
+                      <td>
+                        {lead.contractSigned ? (
+                          <span style={{ color: 'var(--green)' }}>تم التعاقد</span>
+                        ) : (
+                          <button 
+                            onClick={() => handleSave(lead.id, { contractSigned: true })}
+                            className={styles.submitBtn} 
+                            style={{ padding: '0.2rem 0.5rem', width: 'auto', marginTop: 0 }}
+                          >
+                            <FileText size={14} style={{ marginRight: '0.2rem' }} /> توقيع تعاقد
+                          </button>
+                        )}
+                      </td>
                       <td>
                         <div style={{ display: 'flex', gap: '0.5rem' }}>
                           <button onClick={() => setEditingId(lead.id)} className={styles.actionIcon}><Edit size={16} /></button>

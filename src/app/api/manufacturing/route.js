@@ -29,7 +29,7 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-  const auth = requireRole(request, ['AccountManager']);
+  const auth = requireRole(request, ['AccountManager', 'Accounting', 'Purchasing']);
   if (auth.error) return NextResponse.json({ success: false, error: auth.error }, { status: auth.status });
 
   try {
@@ -37,10 +37,16 @@ export async function POST(request) {
     const data = await request.json();
 
     if (!data.stagesData || data.stagesData.length === 0) {
-      const defaultStages = [
-        'Measurement', 'Design', 'Contract', 'Cutting', 'Assembling', 'Finishing', 'Delivery', 'Installation'
+      data.stagesData = [
+        { name: 'Measurement', approvalRoleRequired: 'Admin' },
+        { name: 'Design', approvalRoleRequired: 'Purchasing' },
+        { name: 'Contract', approvalRoleRequired: 'Accounting' },
+        { name: 'Cutting', approvalRoleRequired: 'Admin' },
+        { name: 'Assembling', approvalRoleRequired: 'Admin' },
+        { name: 'Finishing', approvalRoleRequired: 'Admin' },
+        { name: 'Delivery', approvalRoleRequired: 'Admin' },
+        { name: 'Installation', approvalRoleRequired: 'Admin' }
       ];
-      data.stagesData = defaultStages.map(name => ({ name }));
     }
 
     const newProject = await ManufacturingProject.create(data);
@@ -56,7 +62,7 @@ export async function POST(request) {
 }
 
 export async function PUT(request) {
-  const auth = requireRole(request, ['AccountManager']);
+  const auth = requireRole(request, ['AccountManager', 'Accounting', 'Purchasing']);
   if (auth.error) return NextResponse.json({ success: false, error: auth.error }, { status: auth.status });
 
   try {
