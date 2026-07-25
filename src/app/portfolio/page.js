@@ -41,9 +41,15 @@ function PortfolioContent() {
 
   useEffect(() => {
     if (filterParam && categories.includes(filterParam)) {
-      setActiveFilter(filterParam);
+      setTimeout(() => setActiveFilter(filterParam), 0);
     }
   }, [filterParam, categories]);
+
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.body.style.overflow = selectedProject ? 'hidden' : 'auto';
+    }
+  }, [selectedProject]);
 
   const filteredProjects = activeFilter === "All" 
     ? projects 
@@ -52,12 +58,10 @@ function PortfolioContent() {
   const openModal = (project) => {
     setSelectedProject(project);
     setActiveImageIndex(0);
-    document.body.style.overflow = 'hidden';
   };
 
   const closeModal = () => {
     setSelectedProject(null);
-    document.body.style.overflow = 'auto';
   };
 
   return (

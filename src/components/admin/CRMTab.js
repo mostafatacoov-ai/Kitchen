@@ -13,10 +13,6 @@ export default function CRMTab() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [formData, setFormData] = useState({ clientName: '', phone: '', status: 'New', source: 'Website', notes: '', expectedValue: 0 });
 
-  useEffect(() => {
-    fetchLeads();
-  }, []);
-
   const fetchLeads = async () => {
     try {
       const key = localStorage.getItem('admin_passkey');
@@ -31,6 +27,10 @@ export default function CRMTab() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchLeads();
+  }, []);
 
   const handleSave = async (id, updatedLead) => {
     const key = localStorage.getItem('admin_passkey');

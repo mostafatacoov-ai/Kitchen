@@ -6,10 +6,6 @@ export default function PurchasingTab({ userRole, token }) {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
   const fetchOrders = async () => {
     try {
       const res = await fetch('/api/purchasing', { headers: { 'x-auth-token': token } });
@@ -21,6 +17,10 @@ export default function PurchasingTab({ userRole, token }) {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
   const updateStatus = async (id, status) => {
     try {

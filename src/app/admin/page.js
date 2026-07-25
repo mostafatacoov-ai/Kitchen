@@ -35,25 +35,6 @@ export default function AdminPage() {
   const [newProject, setNewProject] = useState({ titleEn: '', titleAr: '', descEn: '', descAr: '', category: 'Modern' });
   const [images, setImages] = useState(null);
 
-  useEffect(() => {
-    const savedToken = localStorage.getItem('admin_token');
-    const savedUser = localStorage.getItem('admin_user');
-    if (savedToken && savedUser) {
-      setToken(savedToken);
-      setUser(JSON.parse(savedUser));
-      setIsLoggedIn(true);
-      // Determine default tab
-      determineDefaultTab(JSON.parse(savedUser).role);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isLoggedIn && token) {
-      if (activeTab === 'requests') fetchRequests();
-      if (activeTab === 'projects') fetchProjects();
-    }
-  }, [isLoggedIn, token, activeTab]);
-
   const determineDefaultTab = (role) => {
     if (role === 'Admin' || role === 'Sales') setActiveTab('requests');
     else if (role === 'Accounting') setActiveTab('accounting');
@@ -81,8 +62,30 @@ export default function AdminPage() {
       if (!res.ok) return console.error('Fetch projects failed', res.status);
       const data = await res.json();
       if (data.success) setProjects(data.data);
-    } catch (err) { console.error(err); }
+    } catch (err) { console.error('Error fetching requests:', err); }
   };
+
+  useEffect(() => {
+    const savedToken = localStorage.getItem('admin_token');
+    const savedUser = localStorage.getItem('admin_user');
+    if (savedToken && savedUser) {
+      setTimeout(() => {
+        setToken(savedToken);
+        const parsedUser = JSON.parse(savedUser);
+        setUser(parsedUser);
+        setIsLoggedIn(true);
+        // Determine default tab
+        determineDefaultTab(parsedUser.role);
+      }, 0);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isLoggedIn && token) {
+      if (activeTab === 'requests') fetchRequests();
+      if (activeTab === 'projects') fetchProjects();
+    }
+  }, [isLoggedIn, token, activeTab]);
 
   const handleLogin = async (e) => {
     e.preventDefault();

@@ -27,12 +27,6 @@ export default function ManufacturingTab({ userRole, token }) {
 
   const [formData, setFormData] = useState(emptyFormData);
 
-  useEffect(() => {
-    fetchProjects();
-    fetchPublicProjects();
-    fetchApprovedLeads();
-  }, []);
-
   const fetchProjects = async () => {
     try {
       const res = await fetch('/api/manufacturing', { headers: { 'x-auth-token': token } });
@@ -68,6 +62,12 @@ export default function ManufacturingTab({ userRole, token }) {
       console.error(err);
     }
   };
+
+  useEffect(() => {
+    fetchProjects();
+    fetchPublicProjects();
+    fetchApprovedLeads();
+  }, []);
 
   const handleSaveProject = async () => {
     const payload = { ...formData };

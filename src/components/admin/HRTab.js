@@ -13,11 +13,6 @@ export default function HRTab() {
 
   const roles = ['Designer', 'Carpenter', 'Driver', 'Accountant', 'Manager', 'Other'];
 
-  useEffect(() => {
-    fetchEmployees();
-    fetchApplications();
-  }, []);
-
   const fetchEmployees = async () => {
     try {
       const key = localStorage.getItem('admin_passkey');
@@ -45,6 +40,11 @@ export default function HRTab() {
       console.error(err);
     }
   };
+
+  useEffect(() => {
+    fetchEmployees();
+    fetchApplications();
+  }, []);
 
   const handleSaveEmployee = async () => {
     const key = localStorage.getItem('admin_passkey');

@@ -9,11 +9,13 @@ export function LanguageProvider({ children }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem('lang');
-    if (saved) {
-      setLang(saved);
-    }
-    setMounted(true);
+    setTimeout(() => {
+      const saved = localStorage.getItem('lang');
+      if (saved) {
+        setLang(saved);
+      }
+      setMounted(true);
+    }, 0);
   }, []);
 
   useEffect(() => {

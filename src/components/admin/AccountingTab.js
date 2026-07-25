@@ -23,12 +23,6 @@ export default function AccountingTab() {
 
   const categories = ['Project Revenue', 'Material Cost', 'Labor Cost', 'Overhead', 'Other'];
 
-  useEffect(() => {
-    fetchRecords();
-    fetchProjects();
-    fetchPendingLeads();
-  }, []);
-
   const fetchPendingLeads = async () => {
     try {
       const key = localStorage.getItem('admin_passkey');
@@ -66,6 +60,12 @@ export default function AccountingTab() {
       console.error(err);
     }
   };
+
+  useEffect(() => {
+    fetchRecords();
+    fetchProjects();
+    fetchPendingLeads();
+  }, []);
 
   const handleSave = async () => {
     const key = localStorage.getItem('admin_passkey');
