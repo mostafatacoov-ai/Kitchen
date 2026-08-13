@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import JobApplication from '@/models/JobApplication';
+import { requireRole } from '@/lib/auth';
 
 export async function POST(request) {
   try {
@@ -17,12 +18,8 @@ export async function POST(request) {
 }
 
 export async function GET(request) {
-  const passkey = request.headers.get('x-admin-passkey');
-  const expectedPasskey = process.env.ADMIN_PASSKEY || '123456';
-  
-  if (passkey !== expectedPasskey) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-  }
+  const auth = requireRole(request, []);
+  if (auth.error) return NextResponse.json({ success: false, error: auth.error }, { status: auth.status });
 
   try {
     await dbConnect();
@@ -42,12 +39,8 @@ export async function GET(request) {
 }
 
 export async function PUT(request) {
-  const passkey = request.headers.get('x-admin-passkey');
-  const expectedPasskey = process.env.ADMIN_PASSKEY || '123456';
-  
-  if (passkey !== expectedPasskey) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-  }
+  const auth = requireRole(request, []);
+  if (auth.error) return NextResponse.json({ success: false, error: auth.error }, { status: auth.status });
 
   try {
     await dbConnect();

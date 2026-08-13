@@ -6,7 +6,7 @@ import styles from '@/app/admin/Admin.module.css';
 const COLORS = ['#22c55e', '#3b82f6', '#f59e0b', '#eab308', '#ef4444'];
 const STATUSES = ['New', 'Contacted', 'Meeting Scheduled', 'Qualified', 'Lost'];
 
-export default function CRMTab() {
+export default function CRMTab({ token, userRole }) {
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState(null);
@@ -15,8 +15,8 @@ export default function CRMTab() {
 
   const fetchLeads = async () => {
     try {
-      const key = localStorage.getItem('admin_passkey');
-      const res = await fetch('/api/crm', { headers: { 'x-admin-passkey': key } });
+      const key = token || localStorage.getItem('admin_token');
+      const res = await fetch('/api/crm', { headers: { 'x-auth-token': key } });
       const data = await res.json();
       if (data.success) {
         setLeads(data.leads);
@@ -33,12 +33,12 @@ export default function CRMTab() {
   }, []);
 
   const handleSave = async (id, updatedLead) => {
-    const key = localStorage.getItem('admin_passkey');
+    const key = token || localStorage.getItem('admin_token');
     try {
       if (id) {
         const res = await fetch('/api/crm', {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json', 'x-admin-passkey': key },
+          headers: { 'Content-Type': 'application/json', 'x-auth-token': key },
           body: JSON.stringify({ id, ...updatedLead })
         });
         if (res.ok) fetchLeads();
@@ -46,7 +46,7 @@ export default function CRMTab() {
       } else {
         const res = await fetch('/api/crm', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-admin-passkey': key },
+          headers: { 'Content-Type': 'application/json', 'x-auth-token': key },
           body: JSON.stringify(formData)
         });
         if (res.ok) {
@@ -62,11 +62,11 @@ export default function CRMTab() {
 
   const handleDelete = async (id) => {
     if (!confirm('Are you sure?')) return;
-    const key = localStorage.getItem('admin_passkey');
+    const key = token || localStorage.getItem('admin_token');
     try {
       const res = await fetch(`/api/crm?id=${id}`, {
         method: 'DELETE',
-        headers: { 'x-admin-passkey': key }
+        headers: { 'x-auth-token': key }
       });
       if (res.ok) fetchLeads();
     } catch (err) {

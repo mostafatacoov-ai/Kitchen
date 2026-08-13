@@ -15,8 +15,8 @@ export default function HRTab() {
 
   const fetchEmployees = async () => {
     try {
-      const key = localStorage.getItem('admin_passkey');
-      const res = await fetch('/api/personnel', { headers: { 'x-admin-passkey': key } });
+      const key = localStorage.getItem('admin_token');
+      const res = await fetch('/api/personnel', { headers: { 'x-auth-token': key } });
       const data = await res.json();
       if (data.success) {
         setEmployees(data.employees);
@@ -30,8 +30,8 @@ export default function HRTab() {
 
   const fetchApplications = async () => {
     try {
-      const key = localStorage.getItem('admin_passkey');
-      const res = await fetch('/api/careers', { headers: { 'x-admin-passkey': key } });
+      const key = localStorage.getItem('admin_token');
+      const res = await fetch('/api/careers', { headers: { 'x-auth-token': key } });
       const data = await res.json();
       if (data.success) {
         setApplications(data.applications);
@@ -47,11 +47,11 @@ export default function HRTab() {
   }, []);
 
   const handleSaveEmployee = async () => {
-    const key = localStorage.getItem('admin_passkey');
+    const key = localStorage.getItem('admin_token');
     try {
       const res = await fetch('/api/personnel', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-admin-passkey': key },
+        headers: { 'Content-Type': 'application/json', 'x-auth-token': key },
         body: JSON.stringify(formData)
       });
       if (res.ok) {
@@ -66,11 +66,11 @@ export default function HRTab() {
 
   const handleDeleteEmployee = async (id) => {
     if (!confirm('Are you sure?')) return;
-    const key = localStorage.getItem('admin_passkey');
+    const key = localStorage.getItem('admin_token');
     try {
       const res = await fetch(`/api/personnel?id=${id}`, {
         method: 'DELETE',
-        headers: { 'x-admin-passkey': key }
+        headers: { 'x-auth-token': key }
       });
       if (res.ok) fetchEmployees();
     } catch (err) {
@@ -79,12 +79,12 @@ export default function HRTab() {
   };
 
   const handleUpdateAppStatus = async (app, newStatus) => {
-    const key = localStorage.getItem('admin_passkey');
+    const key = localStorage.getItem('admin_token');
     try {
       // Update app status
       await fetch('/api/careers', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'x-admin-passkey': key },
+        headers: { 'Content-Type': 'application/json', 'x-auth-token': key },
         body: JSON.stringify({ id: app.id, status: newStatus })
       });
       
@@ -101,7 +101,7 @@ export default function HRTab() {
         };
         await fetch('/api/personnel', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-admin-passkey': key },
+          headers: { 'Content-Type': 'application/json', 'x-auth-token': key },
           body: JSON.stringify(empPayload)
         });
         fetchEmployees();

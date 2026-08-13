@@ -51,8 +51,8 @@ export default function ManufacturingTab({ userRole, token }) {
 
   const fetchApprovedLeads = async () => {
     try {
-      const key = localStorage.getItem('admin_passkey');
-      const res = await fetch('/api/crm', { headers: { 'x-admin-passkey': key || token } });
+      const key = localStorage.getItem('admin_token');
+      const res = await fetch('/api/crm', { headers: { 'x-auth-token': key || token } });
       const data = await res.json();
       if (data.success) {
         const approved = data.leads.filter(l => l.downPaymentConfirmed);

@@ -3,17 +3,11 @@ import fs from 'fs';
 import path from 'path';
 import dbConnect from '@/lib/db';
 import ProjectModel from '@/models/Project';
-
-function verifyPasskey(request) {
-  const passkey = request.headers.get('x-admin-passkey');
-  const expectedPasskey = process.env.ADMIN_PASSKEY || '123456';
-  return passkey === expectedPasskey;
-}
+import { requireRole } from '@/lib/auth';
 
 export async function DELETE(request, context) {
-  if (!verifyPasskey(request)) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-  }
+  const auth = requireRole(request, ['Admin', 'AccountManager']);
+  if (auth.error) return NextResponse.json({ success: false, error: auth.error }, { status: auth.status });
 
   try {
     // Next.js >= 15 requires params to be awaited

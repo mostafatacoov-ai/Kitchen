@@ -25,8 +25,8 @@ export default function AccountingTab() {
 
   const fetchPendingLeads = async () => {
     try {
-      const key = localStorage.getItem('admin_passkey');
-      const res = await fetch('/api/crm', { headers: { 'x-admin-passkey': key } });
+      const key = localStorage.getItem('admin_token');
+      const res = await fetch('/api/crm', { headers: { 'x-auth-token': key } });
       const data = await res.json();
       if (data.success) {
         const pending = data.leads.filter(l => l.contractSigned && !l.downPaymentConfirmed);
@@ -39,8 +39,8 @@ export default function AccountingTab() {
 
   const fetchRecords = async () => {
     try {
-      const key = localStorage.getItem('admin_passkey');
-      const res = await fetch('/api/accounting', { headers: { 'x-admin-passkey': key } });
+      const key = localStorage.getItem('admin_token');
+      const res = await fetch('/api/accounting', { headers: { 'x-auth-token': key } });
       const data = await res.json();
       if (data.success) setRecords(data.records);
     } catch (err) {
@@ -52,8 +52,8 @@ export default function AccountingTab() {
 
   const fetchProjects = async () => {
     try {
-      const key = localStorage.getItem('admin_passkey');
-      const res = await fetch('/api/manufacturing', { headers: { 'x-admin-passkey': key } });
+      const key = localStorage.getItem('admin_token');
+      const res = await fetch('/api/manufacturing', { headers: { 'x-auth-token': key } });
       const data = await res.json();
       if (data.success) setProjects(data.projects);
     } catch (err) {
@@ -68,14 +68,14 @@ export default function AccountingTab() {
   }, []);
 
   const handleSave = async () => {
-    const key = localStorage.getItem('admin_passkey');
+    const key = localStorage.getItem('admin_token');
     const payload = { ...formData };
     if (!payload.relatedProject) delete payload.relatedProject;
 
     try {
       const res = await fetch('/api/accounting', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-admin-passkey': key },
+        headers: { 'Content-Type': 'application/json', 'x-auth-token': key },
         body: JSON.stringify(payload)
       });
       if (res.ok) {
@@ -90,11 +90,11 @@ export default function AccountingTab() {
 
   const handleDelete = async (id) => {
     if (!confirm('Are you sure?')) return;
-    const key = localStorage.getItem('admin_passkey');
+    const key = localStorage.getItem('admin_token');
     try {
       const res = await fetch(`/api/accounting?id=${id}`, {
         method: 'DELETE',
-        headers: { 'x-admin-passkey': key }
+        headers: { 'x-auth-token': key }
       });
       if (res.ok) fetchRecords();
     } catch (err) {
@@ -106,13 +106,13 @@ export default function AccountingTab() {
     const amount = prompt(`أدخل قيمة الدفعة المقدمة للعميل ${lead.clientName} (EGP):`);
     if (!amount || isNaN(amount)) return;
 
-    const key = localStorage.getItem('admin_passkey');
+    const key = localStorage.getItem('admin_token');
     
     try {
       // 1. Log Income
       await fetch('/api/accounting', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-admin-passkey': key },
+        headers: { 'Content-Type': 'application/json', 'x-auth-token': key },
         body: JSON.stringify({
           type: 'Income',
           category: 'Project Revenue',
@@ -124,7 +124,7 @@ export default function AccountingTab() {
       // 2. Update Lead
       await fetch('/api/crm', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'x-admin-passkey': key },
+        headers: { 'Content-Type': 'application/json', 'x-auth-token': key },
         body: JSON.stringify({
           id: lead.id,
           downPaymentConfirmed: true
