@@ -23,7 +23,7 @@ function PortfolioContent() {
         const res = await fetch('/api/projects');
         const data = await res.json();
         if (data.success) {
-          setProjects(data.projects);
+          setProjects(data.projects || []);
         }
       } catch (error) {
         console.error('Failed to fetch projects', error);
@@ -35,7 +35,7 @@ function PortfolioContent() {
   }, []);
 
   const categories = useMemo(() => {
-    const cats = new Set(projects.map(p => p.category));
+    const cats = new Set((projects || []).map(p => p.category));
     return ["All", ...Array.from(cats)];
   }, [projects]);
 
@@ -52,8 +52,8 @@ function PortfolioContent() {
   }, [selectedProject]);
 
   const filteredProjects = activeFilter === "All" 
-    ? projects 
-    : projects.filter(p => p.category === activeFilter);
+    ? (projects || []) 
+    : (projects || []).filter(p => p.category === activeFilter);
 
   const openModal = (project) => {
     setSelectedProject(project);
@@ -97,7 +97,7 @@ function PortfolioContent() {
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '40vh', color: 'var(--orange)' }}>
           {t('portfolio.loading')}
         </div>
-      ) : projects.length === 0 ? (
+      ) : (projects || []).length === 0 ? (
         <div style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-secondary)' }}>
           لا توجد مشاريع مضافة حتى الآن / No projects added yet
         </div>
