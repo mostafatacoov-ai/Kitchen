@@ -1,0 +1,105 @@
+.bellContainer {
+  position: relative;
+  display: inline-block;
+}
+
+.bellBtn {
+  background: none;
+  border: none;
+  color: var(--text-primary, #fff);
+  cursor: pointer;
+  position: relative;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.bellBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #ef4444;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 99px;
+  border: 2px solid var(--bg-card, #1e1e1e);
+}
+
+.dropdown {
+  position: absolute;
+  top: 120%;
+  left: 0;
+  width: 320px;
+  background: var(--bg-card, #1e1e1e);
+  border: 1px solid var(--border-color, #333);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.dropdownHeader {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color, #333);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dropdownHeader h4 {
+  margin: 0;
+  color: var(--text-primary, #fff);
+}
+
+.markAllBtn {
+  background: none;
+  border: none;
+  color: var(--primary-color, #d4af37);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.markAllBtn:hover {
+  text-decoration: underline;
+}
+
+.dropdownList {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.emptyMsg {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-secondary, #aaa);
+}
+
+.notificationItem {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color, #333);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.notificationItem:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.notificationItem p {
+  margin: 0 0 0.5rem 0;
+  color: var(--text-primary, #fff);
+  font-size: 0.95rem;
+}
+
+.notificationItem small {
+  color: var(--text-secondary, #aaa);
+}

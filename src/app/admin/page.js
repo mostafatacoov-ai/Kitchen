@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { Loader2, Key, LogOut, LayoutDashboard, Briefcase, Users, Wrench, DollarSign, MessageSquare, UserPlus } from 'lucide-react';
+import { Loader2, Key, LogOut, LayoutDashboard, Briefcase, Users, Wrench, DollarSign, MessageSquare, UserPlus, Shield, Calendar } from 'lucide-react';
 import styles from './Admin.module.css';
 
 // Import Components
@@ -11,6 +11,9 @@ import ManufacturingTab from '@/components/admin/ManufacturingTab';
 import HRTab from '@/components/admin/HRTab';
 import AccountingTab from '@/components/admin/AccountingTab';
 import PurchasingTab from '@/components/admin/PurchasingTab';
+import UsersTab from '@/components/admin/UsersTab';
+import DashboardTab from '@/components/admin/DashboardTab';
+import NotificationBell from '@/components/admin/NotificationBell';
 
 export default function AdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -36,10 +39,7 @@ export default function AdminPage() {
   const [images, setImages] = useState(null);
 
   const determineDefaultTab = (role) => {
-    if (role === 'Admin' || role === 'Sales') setActiveTab('requests');
-    else if (role === 'Accounting') setActiveTab('accounting');
-    else if (role === 'AccountManager') setActiveTab('projects');
-    else if (role === 'Purchasing') setActiveTab('purchasing');
+    setActiveTab('dashboard');
   };
 
   const fetchRequests = async () => {
@@ -183,6 +183,8 @@ export default function AdminPage() {
 
   // RBAC Navigation Configuration
   const allNavItems = [
+    { id: 'dashboard', label: 'التقويم والمهام', icon: Calendar, roles: ['Admin', 'Sales', 'AccountManager', 'Accounting', 'Purchasing'] },
+    { id: 'users', label: 'إدارة المستخدمين', icon: Shield, roles: ['Admin'] },
     { id: 'requests', label: 'الطلبات الواردة', icon: MessageSquare, roles: ['Admin', 'Sales'] },
     { id: 'crm', label: 'إدارة العملاء (CRM)', icon: Users, roles: ['Admin', 'Sales'] },
     { id: 'projects', label: 'معرض المشاريع', icon: Briefcase, roles: ['Admin', 'AccountManager'] },
@@ -198,7 +200,10 @@ export default function AdminPage() {
     <div className={styles.dashboardLayout}>
       <aside className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
-          <h1>The Kitchen</h1>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h1>The Kitchen</h1>
+            {isLoggedIn && <NotificationBell token={token} />}
+          </div>
           <p>مرحباً، {user.username}</p>
           <span style={{ fontSize: '0.8rem', background: 'rgba(255,255,255,0.1)', padding: '0.2rem 0.5rem', borderRadius: '4px', marginTop: '0.5rem', display: 'inline-block' }}>
             {user.role}
@@ -230,6 +235,7 @@ export default function AdminPage() {
       </aside>
 
       <main className={styles.mainContent}>
+        {activeTab === 'dashboard' && <DashboardTab userRole={user.role} token={token} />}
         {activeTab === 'requests' && (
           <div className={styles.tabContentPanel}>
             <div className={styles.panelHeader}>
@@ -271,6 +277,7 @@ export default function AdminPage() {
         {activeTab === 'purchasing' && <PurchasingTab userRole={user.role} token={token} />}
         {activeTab === 'hr' && <HRTab userRole={user.role} token={token} />}
         {activeTab === 'accounting' && <AccountingTab userRole={user.role} token={token} />}
+        {activeTab === 'users' && <UsersTab userRole={user.role} token={token} />}
       </main>
     </div>
   );

@@ -1,0 +1,209 @@
+.dashboardTab {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.addBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--primary-color, #d4af37);
+  color: #000;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.addBtn:hover {
+  opacity: 0.9;
+}
+
+.calendarControls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-card, #1e1e1e);
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color, #333);
+}
+
+.calendarControls button {
+  background: none;
+  border: none;
+  color: var(--primary-color, #d4af37);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+}
+
+.dayName {
+  text-align: center;
+  font-weight: bold;
+  color: var(--text-secondary, #aaa);
+  padding: 0.5rem 0;
+}
+
+.calendarCell, .calendarCellEmpty {
+  background: var(--bg-card, #1e1e1e);
+  border: 1px solid var(--border-color, #333);
+  border-radius: 8px;
+  min-height: 120px;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.calendarCellEmpty {
+  background: transparent;
+  border: none;
+}
+
+.calendarCell.today {
+  border-color: var(--primary-color, #d4af37);
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.dateNumber {
+  font-weight: bold;
+  color: var(--text-secondary, #aaa);
+}
+
+.today .dateNumber {
+  color: var(--primary-color, #d4af37);
+}
+
+.tasksContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  overflow-y: auto;
+  max-height: 80px;
+}
+
+/* Scrollbar for tasks */
+.tasksContainer::-webkit-scrollbar { width: 4px; }
+.tasksContainer::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
+
+.taskPill {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: rgba(255,255,255,0.05);
+  padding: 0.3rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  border-right: 2px solid #ef4444; /* Default pending color */
+  transition: opacity 0.2s;
+}
+
+.taskPill:hover {
+  opacity: 0.8;
+}
+
+.taskCompleted {
+  border-right-color: #10b981;
+  opacity: 0.6;
+}
+
+.taskTitle {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.assignedBadge {
+  background: rgba(0,0,0,0.5);
+  padding: 0.1rem 0.3rem;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  color: var(--primary-color, #d4af37);
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: var(--bg-card, #1e1e1e);
+  padding: 2rem;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+  border: 1px solid var(--border-color, #333);
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.formGroup input, .formGroup select, .formGroup textarea {
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color, #444);
+  background: var(--bg-input, #111);
+  color: #fff;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.cancelBtn, .submitBtn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.cancelBtn {
+  background: transparent;
+  color: #fff;
+  border: 1px solid #555;
+}
+
+.submitBtn {
+  background: var(--primary-color, #d4af37);
+  color: #000;
+}
+
+@media (max-width: 768px) {
+  .calendarGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .dayName {
+    display: none;
+  }
+}
